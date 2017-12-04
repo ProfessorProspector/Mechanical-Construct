@@ -12,12 +12,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ItemWrench extends Item {
-    public ItemWrench() {
-        ShootingStar.registerModel(new ModelCompound(MechConstruct.MOD_ID, this));
-    }
+	public ItemWrench() {
+		String name = "wrench";
+		this.setRegistryName(MechConstruct.MOD_ID, name);
+		this.setUnlocalizedName(MechConstruct.MOD_ID + "." + name);
+		ShootingStar.registerModel(new ModelCompound(MechConstruct.MOD_ID, this));
+	}
 
-    @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        return EnumActionResult.PASS;
-    }
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		return EnumActionResult.PASS;
+	}
 }
