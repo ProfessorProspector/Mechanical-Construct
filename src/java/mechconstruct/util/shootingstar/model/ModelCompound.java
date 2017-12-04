@@ -26,7 +26,7 @@
  * THE SOFTWARE.
  */
 
-package prospector.shootingstar.model;
+package mechconstruct.util.shootingstar.model;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;

@@ -1,10 +1,13 @@
 package mechconstruct.util;
 
-import mechconstruct.MechConstruct;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.energy.EnergyStorage;
 
-public class EnergyHandler extends EnergyStorage {
+import javax.annotation.Nullable;
+
+public class EnergyHandler extends EnergyStorage implements INBTSerializable<NBTTagCompound> {
+
     public EnergyHandler(int capacity) {
         super(capacity);
     }
@@ -21,17 +24,50 @@ public class EnergyHandler extends EnergyStorage {
         super(capacity, maxInput, maxOutput, energy);
     }
 
-    public void writeToNBT(NBTTagCompound tag) {
-        tag.setInteger(MechConstruct.MOD_ID + ":energy", energy);
-        tag.setInteger(MechConstruct.MOD_ID + ":energy_capacity", capacity);
-        tag.setInteger(MechConstruct.MOD_ID + ":maxInput", maxReceive);
-        tag.setInteger(MechConstruct.MOD_ID + ":maxOutput", maxExtract);
+    /**
+     * @return the corresponding Bandwidth for the max IO values. Returns null if not a valid (custom) bandwidth.
+     */
+    @Nullable
+    public EnergyUtils.Bandwidth getBandwidth() {
+        for (EnergyUtils.Bandwidth bandwidth : EnergyUtils.Bandwidth.values()) {
+            if (maxReceive == bandwidth.getMaxInput() && maxExtract == bandwidth.getMaxOutput()) {
+                return bandwidth;
+            }
+        }
+        return null;
     }
 
-    public void readFromNBT(NBTTagCompound tag) {
-        energy = tag.getInteger(MechConstruct.MOD_ID + ":energy");
-        capacity = tag.getInteger(MechConstruct.MOD_ID + ":energy_capacity");
-        maxReceive = tag.getInteger(MechConstruct.MOD_ID + ":maxInput");
-        maxExtract = tag.getInteger(MechConstruct.MOD_ID + ":maxOutput");
+    public int getMaxInput() {
+        return maxReceive;
+    }
+
+    public int getMaxOutput() {
+        return maxExtract;
+    }
+
+    public int getCapacity() {
+        return getMaxEnergyStored();
+    }
+
+    public int getEnergy() {
+        return getEnergyStored();
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("energy", energy);
+        compound.setInteger("energy_capacity", capacity);
+        compound.setInteger("maxInput", maxReceive);
+        compound.setInteger("maxOutput", maxExtract);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound compound) {
+        energy = compound.getInteger("energy");
+        capacity = compound.getInteger("energy_capacity");
+        maxReceive = compound.getInteger("maxInput");
+        maxExtract = compound.getInteger("maxOutput");
     }
 }

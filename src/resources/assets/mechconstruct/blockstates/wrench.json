@@ -1,38 +1,16 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "transform": "forge:default-block",
-    "model": "orientable",
+    "transform": "forge:default-tool",
+    "model": "mechconstruct:2d_item",
     "textures": {
-      "particle": "mechconstruct:blocks/machines/basic/basic_furnace_front_off",
-      "top": "mechconstruct:blocks/machines/basic/basic_machine_top",
-      "down": "mechconstruct:blocks/machines/basic/basic_machine_bottom",
-      "side": "mechconstruct:blocks/machines/basic/basic_machine_side"
+      "texture": "mechconstruct:items/tools/wrench"
     }
   },
   "variants": {
-    "facing": {
-      "north": {},
-      "east": {
-        "y": 90
-      },
-      "south": {
-        "y": 180
-      },
-      "west": {
-        "y": 270
-      }
-    },
-    "active": {
-      "true": {
-        "textures": {
-          "front": "mechconstruct:blocks/machines/basic/basic_furnace_front_on"
-        }
-      },
-      "false": {
-        "textures": {
-          "front": "mechconstruct:blocks/machines/basic/basic_furnace_front_off"
-        }
+    "inventory": {
+      "transform": "forge:default-tool",
+      "textures": {
       }
     }
   }

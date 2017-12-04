@@ -11,16 +11,8 @@
     }
   },
   "variants": {
-    "inventory": {
-      "transform": "forge:default-block",
-      "model": "orientable",
-      "textures": {
-        "front": "mechconstruct:blocks/machines/basic/basic_furnace_front_off"
-      }
-    },
     "facing": {
-      "north": {
-      },
+      "north": {},
       "east": {
         "y": 90
       },
@@ -34,12 +26,12 @@
     "active": {
       "true": {
         "textures": {
-          "front": "mechconstruct:blocks/machines/basic/furnace_front_on"
+          "front": "mechconstruct:blocks/machines/basic/basic_furnace_front_on"
         }
       },
       "false": {
         "textures": {
-          "front": "mechconstruct:blocks/machines/basic/furnace_front_off"
+          "front": "mechconstruct:blocks/machines/basic/basic_furnace_front_off"
         }
       }
     }

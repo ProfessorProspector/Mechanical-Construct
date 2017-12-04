@@ -26,7 +26,7 @@
  * THE SOFTWARE.
  */
 
-package prospector.shootingstar.version;
+package mechconstruct.util.shootingstar.version;
 
 public class VersionUtils {
     public static boolean isVersionLessOrEqual(Version comparate1, Version comparate2) {

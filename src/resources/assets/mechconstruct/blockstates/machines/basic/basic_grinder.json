@@ -4,10 +4,37 @@
     "transform": "forge:default-block",
     "model": "orientable",
     "textures": {
-      "texture": "mechconstruct:items/tools/wrench"
+      "particle": "mechconstruct:blocks/machines/basic/basic_grinder_front_off",
+      "down": "mechconstruct:blocks/machines/basic/basic_machine_bottom",
+      "side": "mechconstruct:blocks/machines/basic/basic_machine_side"
     }
   },
   "variants": {
-    "inventory": {}
+    "facing": {
+      "north": {},
+      "east": {
+        "y": 90
+      },
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      }
+    },
+    "active": {
+      "true": {
+        "textures": {
+          "front": "mechconstruct:blocks/machines/basic/basic_grinder_front_on",
+          "top": "mechconstruct:blocks/machines/basic/basic_grinder_top_on"
+        }
+      },
+      "false": {
+        "textures": {
+          "front": "mechconstruct:blocks/machines/basic/basic_grinder_front_off",
+          "top": "mechconstruct:blocks/machines/basic/basic_grinder_top_off"
+        }
+      }
+    }
   }
 }

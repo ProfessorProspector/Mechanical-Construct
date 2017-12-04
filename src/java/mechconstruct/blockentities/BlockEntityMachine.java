@@ -1,5 +1,6 @@
-package mechconstruct.block;
+package mechconstruct.blockentities;
 
+import mechconstruct.block.BlockMachine;
 import mechconstruct.util.EnergyHandler;
 import mechconstruct.util.EnergyUtils;
 import mechconstruct.util.FluidHandler;
@@ -16,7 +17,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockEntityMachine extends TileEntity implements ITickable {
+public abstract class BlockEntityMachine extends TileEntity implements ITickable {
     protected ItemStackHandler itemInventory;
     protected ItemStackHandler upgradeInventory;
     protected ItemStackHandler chargeInventory;
@@ -24,8 +25,6 @@ public class BlockEntityMachine extends TileEntity implements ITickable {
     protected FluidHandler fluidInventory;
     protected int costMultiplier = 0;
     protected BlockMachine block;
-    protected EnumFacing facing;
-    protected boolean active;
 
     public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
         this.itemInventory = inventorySize > 0 ? new ItemStackHandler(inventorySize) : null;
@@ -49,56 +48,34 @@ public class BlockEntityMachine extends TileEntity implements ITickable {
 
 
     @Override
-    public final void update() {
-        block.machineTick(this);
+    public void update() {
+        machineTick();
     }
 
-    public EnumFacing getFacing() {
-        if (facing == null) {
-            facing = block.getDefaultState().getValue(BlockMachine.FACING);
-            active = block.getDefaultState().getValue(BlockMachine.ACTIVE);
-        }
-        return facing;
-    }
+    public abstract void machineTick();
 
-    public void setFacing(EnumFacing facing) {
-        this.facing = facing;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setBlock(BlockMachine block) {
+        this.block = block;
     }
 
     public BlockMachine getBlock() {
         return block;
     }
 
-    public void setBlock(BlockMachine block) {
-        this.block = block;
-    }
-
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        compound.setTag("item_inventory", itemInventory.serializeNBT());
-        compound.setTag("energy_inventory", energyInventory.serializeNBT());
-        compound.setTag("fluid_inventory", fluidInventory.serializeNBT());
-        compound.setString("facing", facing.getName());
-        compound.setBoolean("active", active);
+        if (itemInventory != null) compound.setTag("item_inventory", itemInventory.serializeNBT());
+        if (energyInventory != null) compound.setTag("energy_inventory", energyInventory.serializeNBT());
+        if (fluidInventory != null) compound.setTag("fluid_inventory", fluidInventory.serializeNBT());
     }
 
     @SuppressWarnings("NullableProblems")
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        itemInventory.deserializeNBT(compound.getCompoundTag("item_inventory"));
-        energyInventory.deserializeNBT(compound.getCompoundTag("energy_inventory"));
-        fluidInventory.deserializeNBT(compound.getCompoundTag("fluid_inventory"));
-        facing = EnumFacing.byName(compound.getString("facing"));
-        active = compound.getBoolean("active");
+        if (itemInventory != null) itemInventory.deserializeNBT(compound.getCompoundTag("item_inventory"));
+        if (energyInventory != null) energyInventory.deserializeNBT(compound.getCompoundTag("energy_inventory"));
+        if (fluidInventory != null) fluidInventory.deserializeNBT(compound.getCompoundTag("fluid_inventory"));
         return super.writeToNBT(compound);
     }
 
@@ -106,15 +83,24 @@ public class BlockEntityMachine extends TileEntity implements ITickable {
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) itemInventory;
-        if (capability == CapabilityEnergy.ENERGY) return (T) energyInventory;
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return (T) fluidInventory;
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null)
+            return (T) itemInventory;
+        if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
+            return (T) energyInventory;
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidInventory != null)
+            return (T) fluidInventory;
         return super.getCapability(capability, facing);
     }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        return (itemInventory != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) || (energyInventory != null && capability == CapabilityEnergy.ENERGY) || (fluidInventory != null && capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) || super.hasCapability(capability, facing);
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null)
+            return true;
+        if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
+            return true;
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidInventory != null)
+            return true;
+        return super.hasCapability(capability, facing);
     }
 
     public int getCostMultiplier() {

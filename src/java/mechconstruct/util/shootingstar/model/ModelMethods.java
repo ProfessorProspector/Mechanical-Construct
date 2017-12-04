@@ -26,7 +26,7 @@
  * THE SOFTWARE.
  */
 
-package prospector.shootingstar.model;
+package mechconstruct.util.shootingstar.model;
 
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;

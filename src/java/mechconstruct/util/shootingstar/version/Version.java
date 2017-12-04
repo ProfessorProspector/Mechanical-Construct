@@ -26,7 +26,7 @@
  * THE SOFTWARE.
  */
 
-package prospector.shootingstar.version;
+package mechconstruct.util.shootingstar.version;
 
 public class Version {
     public static final Version NULL_VERSION = new Version(0, 0, 0);
