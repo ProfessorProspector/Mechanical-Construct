@@ -2,10 +2,14 @@ package mechconstruct.gui;
 
 import mechconstruct.MechConstruct;
 import mechconstruct.gui.blueprint.GuiBlueprint;
+import mechconstruct.gui.blueprint.elements.ButtonElement;
 import mechconstruct.gui.blueprint.elements.ElementBase;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+
+import java.io.IOException;
 
 public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 	public final GuiBlueprint blueprint;
@@ -18,6 +22,16 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 		this.blueprint = blueprint;
 		xSize = blueprint.xSize;
 		ySize = blueprint.ySize;
+	}
+
+	@Override
+	public void initGui() {
+		super.initGui();
+		int buttonId = 0;
+		for (ButtonElement element : blueprint.buttonElements) {
+			this.buttonList.add(new MechGuiButton(buttonId, element));
+			buttonId++;
+		}
 	}
 
 	@Override
@@ -59,4 +73,11 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 		MechConstruct.proxy.getGuiAssembler().drawCenteredString(this, I18n.format(blueprint.machine.getBlockType().getUnlocalizedName() + ".name"), 6, 4210752);
 	}
 
+	@Override
+	protected void actionPerformed(GuiButton button) throws IOException {
+		if (button instanceof MechGuiButton) {
+			((MechGuiButton) button).element.getAction().execute(this.container.machine);
+		}
+		super.actionPerformed(button);
+	}
 }

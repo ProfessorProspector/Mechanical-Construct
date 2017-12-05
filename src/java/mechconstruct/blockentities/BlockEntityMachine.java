@@ -26,30 +26,46 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	protected ItemStackHandler chargeInventory;
 	protected EnergyHandler energyInventory;
 	protected FluidHandler fluidInventory;
+	protected boolean hasItemInventory = false;
+	protected boolean hasUpgradeInventory = false;
+	protected boolean hasEnergyChargeInventories = false;
+	protected boolean hasFluidInventory = false;
 	protected int costMultiplier = 0;
 	protected BlockMachine block;
 
 	public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
-		this.itemInventory = inventorySize > 0 ? new ItemStackHandler(inventorySize) {
-			@Override
-			protected void onContentsChanged(int slot) {
-				BlockEntityMachine.this.markDirty();
-			}
-		} : null;
-		this.upgradeInventory = upgradeSlots > 0 ? new ItemStackHandler(upgradeSlots) {
-			@Override
-			protected void onContentsChanged(int slot) {
-				BlockEntityMachine.this.markDirty();
-			}
-		} : null;
-		this.chargeInventory = energyCapacity > 0 && bandwidth != EnergyUtils.Bandwidth.NONE ? new ItemStackHandler(1) {
-			@Override
-			protected void onContentsChanged(int slot) {
-				BlockEntityMachine.this.markDirty();
-			}
-		} : null;
-		this.energyInventory = energyCapacity > 0 && bandwidth != EnergyUtils.Bandwidth.NONE ? new EnergyHandler(energyCapacity, bandwidth.getMaxInput(), bandwidth.getMaxOutput()) : null;
-		this.fluidInventory = tanks.length > 0 ? new FluidHandler(tanks) : null;
+		if (inventorySize > 0) {
+			this.itemInventory = new ItemStackHandler(inventorySize) {
+				@Override
+				protected void onContentsChanged(int slot) {
+					BlockEntityMachine.this.markDirty();
+				}
+			};
+			this.hasItemInventory = true;
+		}
+		if (upgradeSlots > 0) {
+			this.upgradeInventory = new ItemStackHandler(upgradeSlots) {
+				@Override
+				protected void onContentsChanged(int slot) {
+					BlockEntityMachine.this.markDirty();
+				}
+			};
+			this.hasUpgradeInventory = true;
+		}
+		if (energyCapacity > 0 && bandwidth != EnergyUtils.Bandwidth.NONE) {
+			this.energyInventory = new EnergyHandler(energyCapacity, bandwidth.getMaxInput(), bandwidth.getMaxOutput());
+			this.chargeInventory = new ItemStackHandler(1) {
+				@Override
+				protected void onContentsChanged(int slot) {
+					BlockEntityMachine.this.markDirty();
+				}
+			};
+			this.hasEnergyChargeInventories = true;
+		}
+		if (tanks.length > 0) {
+			this.fluidInventory = new FluidHandler(tanks);
+			this.hasFluidInventory = true;
+		}
 	}
 
 	public BlockEntityMachine(int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
@@ -81,23 +97,37 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		if (hasItemInventory) {
+			itemInventory.deserializeNBT(compound.getCompoundTag("item_inventory"));
+		}
+		if (hasUpgradeInventory) {
+			upgradeInventory.deserializeNBT(compound.getCompoundTag("upgrade_inventory"));
+		}
+		if (hasEnergyChargeInventories) {
+			energyInventory.deserializeNBT(compound.getCompoundTag("energy_inventory"));
+			chargeInventory.deserializeNBT(compound.getCompoundTag("charge_inventory"));
+		}
+		if (hasFluidInventory) {
+			fluidInventory.deserializeNBT(compound.getCompoundTag("fluid_inventory"));
+		}
 		super.readFromNBT(compound);
-		if (itemInventory != null)
-			compound.setTag("item_inventory", itemInventory.serializeNBT());
-		if (energyInventory != null)
-			compound.setTag("energy_inventory", energyInventory.serializeNBT());
-		if (fluidInventory != null)
-			compound.setTag("fluid_inventory", fluidInventory.serializeNBT());
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		if (itemInventory != null)
-			itemInventory.deserializeNBT(compound.getCompoundTag("item_inventory"));
-		if (energyInventory != null)
-			energyInventory.deserializeNBT(compound.getCompoundTag("energy_inventory"));
-		if (fluidInventory != null)
-			fluidInventory.deserializeNBT(compound.getCompoundTag("fluid_inventory"));
+		if (hasItemInventory) {
+			compound.setTag("item_inventory", itemInventory.serializeNBT());
+		}
+		if (hasUpgradeInventory) {
+			compound.setTag("upgrade_inventory", upgradeInventory.serializeNBT());
+		}
+		if (hasEnergyChargeInventories) {
+			compound.setTag("energy_inventory", energyInventory.serializeNBT());
+			compound.setTag("charge_inventory", chargeInventory.serializeNBT());
+		}
+		if (hasFluidInventory) {
+			compound.setTag("fluid_inventory", fluidInventory.serializeNBT());
+		}
 		return super.writeToNBT(compound);
 	}
 

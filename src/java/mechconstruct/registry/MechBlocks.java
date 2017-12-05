@@ -21,6 +21,7 @@ public class MechBlocks {
 
 	public static Block register(BlockMachine block) {
 		String machineName = "Mech" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, block.getTier() + "_" + block.getName());
+		block.setCreativeTab(MechConstruct.TAB);
 		BLOCKS.add(block);
 		ItemBlock item = new ItemBlock(block);
 		item.setRegistryName(block.getRegistryName());
@@ -36,6 +37,7 @@ public class MechBlocks {
 	}
 
 	public static Block register(Block block, boolean itemBlock) {
+		block.setCreativeTab(MechConstruct.TAB);
 		BLOCKS.add(block);
 		if (itemBlock) {
 			ItemBlock item = new ItemBlock(block);
@@ -52,6 +54,7 @@ public class MechBlocks {
 	}
 
 	public static Block register(Block block, boolean itemBlock, Class<? extends TileEntity> blockEntity, String entityName) {
+		block.setCreativeTab(MechConstruct.TAB);
 		BLOCKS.add(block);
 		if (itemBlock) {
 			ItemBlock item = new ItemBlock(block);

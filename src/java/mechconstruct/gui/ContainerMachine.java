@@ -11,12 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class ContainerMachine extends Container {
-	private final BlockEntityMachine machine;
-	protected ItemStackHandler itemInventory;
-	protected ItemStackHandler upgradeInventory;
-	protected ItemStackHandler chargeInventory;
-	protected EnergyHandler energyInventory;
-	protected FluidHandler fluidInventory;
+	public final BlockEntityMachine machine;
+	public ItemStackHandler itemInventory;
+	public ItemStackHandler upgradeInventory;
+	public ItemStackHandler chargeInventory;
+	public EnergyHandler energyInventory;
+	public FluidHandler fluidInventory;
 
 	public ContainerMachine(BlockEntityMachine machine, EntityPlayer player) {
 		this.machine = machine;

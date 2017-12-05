@@ -2,6 +2,7 @@ package mechconstruct.gui.blueprint;
 
 import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.SlotType;
+import mechconstruct.gui.blueprint.elements.ButtonElement;
 import mechconstruct.gui.blueprint.elements.DummySlotElement;
 import mechconstruct.gui.blueprint.elements.ElementBase;
 import mechconstruct.gui.blueprint.elements.SlotElement;
@@ -13,6 +14,7 @@ import java.util.List;
 public class GuiBlueprint {
 	public List<ElementBase> elements = new ArrayList<>();
 	public List<SlotElement> slots = new ArrayList<>();
+	public List<ButtonElement> buttonElements = new ArrayList<>();
 	public int xSize = 0;
 	public int ySize = 0;
 	public int playerInvX = -1;
@@ -55,6 +57,25 @@ public class GuiBlueprint {
 			}
 		}
 		return this;
+	}
+
+	public GuiBlueprint addElement(ElementBase element) {
+		this.elements.add(element);
+		return this;
+	}
+
+	public GuiBlueprint addButton(ButtonElement button) {
+		this.buttonElements.add(button);
+		this.elements.add(button);
+		return this;
+	}
+
+	public GuiBlueprint addButton(int x, int y, int width, int height) {
+		return addButton(new ButtonElement(x, y, width, height));
+	}
+
+	public GuiBlueprint addButton(String text, int x, int y, int width, int height) {
+		return addButton(new ButtonElement(text, x, y, width, height));
 	}
 
 	public GuiBlueprint addSlot(SlotElement slot) {

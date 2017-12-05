@@ -2,5 +2,5 @@ itemGroup.mechconstruct=Mechanical Construct
 
 item.mechconstruct.wrench.name=Pipe Wrench
 
-machine.mechconstruct.basic_furnace.name=Basic Furnace
-machine.mechconstruct.basic_grinder.name=Basic Grinder
+machine.mechconstruct.basic.furnace.name=Basic Furnace
+machine.mechconstruct.basic.grinder.name=Basic Grinder

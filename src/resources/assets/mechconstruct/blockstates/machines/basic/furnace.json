@@ -4,10 +4,10 @@
     "transform": "forge:default-block",
     "model": "orientable",
     "textures": {
-      "particle": "mechconstruct:blocks/machines/basic/basic_furnace_front_off",
-      "top": "mechconstruct:blocks/machines/basic/basic_machine_top",
-      "down": "mechconstruct:blocks/machines/basic/basic_machine_bottom",
-      "side": "mechconstruct:blocks/machines/basic/basic_machine_side"
+      "particle": "mechconstruct:blocks/machines/basic/furnace_front_off",
+      "top": "mechconstruct:blocks/machines/basic/machine_top",
+      "down": "mechconstruct:blocks/machines/basic/machine_bottom",
+      "side": "mechconstruct:blocks/machines/basic/machine_side"
     }
   },
   "variants": {
@@ -26,12 +26,12 @@
     "active": {
       "true": {
         "textures": {
-          "front": "mechconstruct:blocks/machines/basic/basic_furnace_front_on"
+          "front": "mechconstruct:blocks/machines/basic/furnace_front_on"
         }
       },
       "false": {
         "textures": {
-          "front": "mechconstruct:blocks/machines/basic/basic_furnace_front_off"
+          "front": "mechconstruct:blocks/machines/basic/furnace_front_off"
         }
       }
     }
