@@ -43,6 +43,20 @@ public class MechGuiButton extends GuiButton {
 		}
 	}
 
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public MechGuiButton setX(int x) {
+		this.x = x;
+		return this;
+	}
+
+	public MechGuiButton setY(int y) {
+		this.y = y;
+		return this;
+	}
+
 	public ButtonElement getElement() {
 		return element;
 	}

@@ -29,7 +29,9 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 		super.initGui();
 		int buttonId = 0;
 		for (ButtonElement element : blueprint.buttonElements) {
-			this.buttonList.add(new MechGuiButton(buttonId, element));
+			MechGuiButton button = new MechGuiButton(buttonId, element).setX(element.getX() + guiLeft).setY(element.getY() + guiTop);
+			button.setVisible(!element.isDisableDefaultRenderer());
+			this.buttonList.add(button);
 			buttonId++;
 		}
 	}

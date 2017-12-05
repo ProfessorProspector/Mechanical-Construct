@@ -67,6 +67,9 @@ public class GuiBlueprint {
 	public GuiBlueprint addButton(ButtonElement button) {
 		this.buttonElements.add(button);
 		this.elements.add(button);
+		if (button.hasCustomSprite()) {
+			this.elements.add(new ElementBase(button.getCustomSprite(), button.getX() + button.getCustomSpriteOffsetX(), button.getY() + button.getCustomSpriteOffsetY()));
+		}
 		return this;
 	}
 

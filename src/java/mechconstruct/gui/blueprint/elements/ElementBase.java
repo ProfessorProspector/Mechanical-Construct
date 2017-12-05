@@ -12,7 +12,7 @@ public class ElementBase {
 
 	protected final int x;
 	protected final int y;
-	protected final Sprite sprite;
+	protected Sprite sprite;
 
 	public ElementBase(Sprite sprite, int x, int y) {
 		this.sprite = sprite;
