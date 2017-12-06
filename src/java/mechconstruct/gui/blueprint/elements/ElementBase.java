@@ -1,18 +1,16 @@
 package mechconstruct.gui.blueprint.elements;
 
-import jline.internal.Nullable;
 import mechconstruct.MechConstruct;
 import mechconstruct.gui.GuiMachine;
 import mechconstruct.gui.Sprite;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ElementBase {
 
-	protected final int x;
-	protected final int y;
-	protected Sprite sprite;
+	public int x;
+	public int y;
+	public Sprite sprite;
 
 	public ElementBase(Sprite sprite, int x, int y) {
 		this.sprite = sprite;
@@ -24,28 +22,23 @@ public class ElementBase {
 		this(null, x, y);
 	}
 
-	/**
-	 * @return the element's sprite **MAY BE NULL**
-	 */
-	@Nullable
-	public Sprite getSprite() {
-		return sprite;
+	public ElementBase setSprite(Sprite sprite) {
+		this.sprite = sprite;
+		return this;
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void draw(GuiMachine gui) {
-		if (sprite != null) {
-			GlStateManager.color(1F, 1F, 1F);
-			MechConstruct.proxy.getGuiAssembler().setTextureSheet(sprite.textureLocation);
-			gui.drawTexturedModalRect(x + gui.getOffsetFactorX(), y + gui.getOffsetFactorY(), sprite.x, sprite.y, sprite.width, sprite.height);
-		}
+		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, sprite, x, y);
 	}
 
-	public int getX() {
-		return x;
+	public ElementBase setX(int x) {
+		this.x = x;
+		return this;
 	}
 
-	public int getY() {
-		return y;
+	public ElementBase setY(int y) {
+		this.y = y;
+		return this;
 	}
 }

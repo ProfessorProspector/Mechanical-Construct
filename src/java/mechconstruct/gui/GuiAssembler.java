@@ -1,9 +1,8 @@
 package mechconstruct.gui;
 
+import mechconstruct.MechConstruct;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -133,5 +132,28 @@ public class GuiAssembler extends GuiAssemblerServer {
 	@Override
 	public int getStringWidth(String string) {
 		return Minecraft.getMinecraft().fontRenderer.getStringWidth(string);
+	}
+
+	@Override
+	public void drawSprite(GuiMachine gui, Sprite sprite, int x, int y) {
+		if (sprite != null) {
+			if (sprite.hasTextureInfo()) {
+				GlStateManager.color(1F, 1F, 1F);
+				MechConstruct.proxy.getGuiAssembler().setTextureSheet(sprite.textureLocation);
+				gui.drawTexturedModalRect(x + gui.getOffsetFactorX(), y + gui.getOffsetFactorY(), sprite.x, sprite.y, sprite.width, sprite.height);
+			}
+			if (sprite.hasStack()) {
+				GlStateManager.pushMatrix();
+				GlStateManager.enableBlend();
+				GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+				RenderHelper.enableGUIStandardItemLighting();
+
+				RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
+				itemRenderer.renderItemAndEffectIntoGUI(sprite.itemStack, x + gui.getOffsetFactorX(), y + gui.getOffsetFactorY());
+
+				GlStateManager.disableLighting();
+				GlStateManager.popMatrix();
+			}
+		}
 	}
 }

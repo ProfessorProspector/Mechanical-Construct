@@ -1,91 +1,118 @@
 package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.blockentities.BlockEntityMachine;
-import mechconstruct.gui.MechGuiButton;
+import mechconstruct.gui.GuiMachine;
 import mechconstruct.gui.Sprite;
+import mechconstruct.gui.blueprint.SpriteContainer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ButtonElement extends ElementBase {
-	protected String text;
-	protected int width;
-	protected int height;
-	protected MechGuiButton button;
-	protected ButtonAction action;
-	protected boolean disableDefaultRenderer = true;
-	protected int customSpriteOffsetX = 0;
-	protected int customSpriteOffsetY = 0;
+	public String text;
+	public int width;
+	public int height;
+	public boolean isHovering = false;
+	public boolean isDragging = false;
+	public boolean isPressing = false;
+	public boolean isReleasing = false;
+	public boolean startPressLast = false;
+	public boolean isHoveringLast = false;
+	public boolean isDraggingLast = false;
+	public boolean isPressingLast = false;
+	public boolean isReleasingLast = false;
+	public List<Action> hoverActions = new ArrayList<>();
+	public List<Action> dragActions = new ArrayList<>();
+	public List<Action> startPressActions = new ArrayList<>();
+	public List<Action> pressActions = new ArrayList<>();
+	public List<Action> releaseActions = new ArrayList<>();
+	public List<SpriteContainer> spriteContainers;
 
-	public ButtonElement(String text, int x, int y, int width, int height) {
+	public ButtonElement(String text, int x, int y, int width, int height, SpriteContainer... sprites) {
 		super(x, y);
 		this.width = width;
 		this.height = height;
+		this.spriteContainers = Arrays.asList(sprites);
 	}
 
-	public ButtonElement(int x, int y, int width, int height) {
-		this("", x, y, width, height);
+	public ButtonElement(int x, int y, int width, int height, SpriteContainer... sprites) {
+		this("", x, y, width, height, sprites);
 	}
 
-	public String getText() {
-		return text;
+	@Override
+	public void draw(GuiMachine gui) {
 	}
 
-	public int getWidth() {
-		return width;
+	public void update() {
+		isHoveringLast = isHovering;
+		isPressingLast = isPressing;
+		isDraggingLast = isDragging;
+		isReleasingLast = isReleasing;
 	}
 
-	public int getHeight() {
-		return height;
-	}
-
-	public MechGuiButton getButton() {
-		return button;
-	}
-
-	public ButtonAction getAction() {
-		return action;
-	}
-
-	public ButtonElement setAction(ButtonAction action) {
-		this.action = action;
+	public ButtonElement addHoverAction(Action action) {
+		this.hoverActions.add(action);
 		return this;
 	}
 
-	public boolean isDisableDefaultRenderer() {
-		return disableDefaultRenderer;
-	}
-
-	public ButtonElement setDisableDefaultRenderer(boolean disableDefaultRenderer) {
-		this.disableDefaultRenderer = disableDefaultRenderer;
+	public ButtonElement addDragAction(Action action) {
+		this.dragActions.add(action);
 		return this;
 	}
 
-	public ButtonElement setCustomSprite(Sprite sprite, int offsetX, int offsetY) {
-		this.sprite = sprite;
-		this.customSpriteOffsetX = offsetX;
-		this.customSpriteOffsetY = offsetY;
+	public ButtonElement addStartPressAction(Action action) {
+		this.startPressActions.add(action);
 		return this;
 	}
 
-	public ButtonElement setCustomSprite(Sprite sprite) {
-		return setCustomSprite(sprite, 0, 0);
+	public ButtonElement addPressAction(Action action) {
+		this.pressActions.add(action);
+		return this;
 	}
 
-	public Sprite getCustomSprite() {
-		return this.sprite;
+	public ButtonElement addReleaseAction(Action action) {
+		this.releaseActions.add(action);
+		return this;
 	}
 
-	public boolean hasCustomSprite() {
-		return this.sprite != null;
+	public void onHover(BlockEntityMachine machine, int mouseX, int mouseY) {
+		for (Action action : hoverActions) {
+			action.execute(this, machine, mouseX, mouseY);
+		}
 	}
 
-	public int getCustomSpriteOffsetX() {
-		return customSpriteOffsetX;
+	public void onDrag(BlockEntityMachine machine, int mouseX, int mouseY) {
+		for (Action action : dragActions) {
+			action.execute(this, machine, mouseX, mouseY);
+		}
 	}
 
-	public int getCustomSpriteOffsetY() {
-		return customSpriteOffsetY;
+	public void onStartPress(BlockEntityMachine machine, int mouseX, int mouseY) {
+		for (Action action : startPressActions) {
+			action.execute(this, machine, mouseX, mouseY);
+		}
 	}
 
-	public interface ButtonAction {
-		void execute(BlockEntityMachine machine);
+	public void onRelease(BlockEntityMachine machine, int mouseX, int mouseY) {
+		for (Action action : releaseActions) {
+			action.execute(this, machine, mouseX, mouseY);
+		}
+		if (isPressing) {
+			for (Action action : pressActions) {
+				action.execute(this, machine, mouseX, mouseY);
+			}
+		}
 	}
+
+	public void setSprite(int index, Sprite sprite) {
+		SpriteContainer container = spriteContainers.get(index);
+		container.sprite = sprite;
+		spriteContainers.set(index, container);
+	}
+
+	public interface Action {
+		void execute(ButtonElement element, BlockEntityMachine machine, int mouseX, int mouseY);
+	}
+
 }

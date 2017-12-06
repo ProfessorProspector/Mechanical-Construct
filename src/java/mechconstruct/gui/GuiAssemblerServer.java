@@ -63,4 +63,8 @@ public class GuiAssemblerServer {
 	public int getStringWidth(String string) {
 		return 0;
 	}
+
+	public void drawSprite(GuiMachine gui, Sprite sprite, int x, int y) {
+
+	}
 }
