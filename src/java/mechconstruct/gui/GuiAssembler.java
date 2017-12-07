@@ -9,7 +9,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiAssembler extends GuiAssemblerServer {
+public class GuiAssembler {
+	public static final ResourceLocation BACKGROUND_SHEET = new ResourceLocation(MechConstruct.MOD_ID, "textures/gui/assembler_background.png");
+	public static final ResourceLocation MECH_ELEMENTS = new ResourceLocation(MechConstruct.MOD_ID, "textures/gui/assembler_elements.png");
 	public final ResourceLocation customElementSheet;
 
 	public GuiAssembler(ResourceLocation elementSheet) {
@@ -129,17 +131,15 @@ public class GuiAssembler extends GuiAssemblerServer {
 		drawString(gui, string, (x - gui.mc.fontRenderer.getStringWidth(string) / 2), y, colour);
 	}
 
-	@Override
 	public int getStringWidth(String string) {
 		return Minecraft.getMinecraft().fontRenderer.getStringWidth(string);
 	}
 
-	@Override
 	public void drawSprite(GuiMachine gui, Sprite sprite, int x, int y) {
 		if (sprite != null) {
 			if (sprite.hasTextureInfo()) {
 				GlStateManager.color(1F, 1F, 1F);
-				MechConstruct.proxy.getGuiAssembler().setTextureSheet(sprite.textureLocation);
+				setTextureSheet(sprite.textureLocation);
 				gui.drawTexturedModalRect(x + gui.getOffsetFactorX(), y + gui.getOffsetFactorY(), sprite.x, sprite.y, sprite.width, sprite.height);
 			}
 			if (sprite.hasStack()) {

@@ -1,8 +1,8 @@
 package mechconstruct.gui.blueprint.elements;
 
-import mechconstruct.MechConstruct;
 import mechconstruct.gui.GuiMachine;
 import mechconstruct.gui.Sprite;
+import mechconstruct.proxy.MechClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,7 +29,7 @@ public class ElementBase {
 
 	@SideOnly(Side.CLIENT)
 	public void draw(GuiMachine gui) {
-		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, sprite, x, y);
+		MechClient.GUI_ASSEMBLER.drawSprite(gui, sprite, x, y);
 	}
 
 	public ElementBase setX(int x) {

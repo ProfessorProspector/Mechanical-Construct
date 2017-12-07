@@ -2,7 +2,6 @@ package mechconstruct.proxy;
 
 import mechconstruct.MechConstruct;
 import mechconstruct.gui.GuiAssembler;
-import mechconstruct.gui.GuiAssemblerServer;
 import mechconstruct.util.shootingstar.ShootingStar;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -13,6 +12,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = MechConstruct.MOD_ID)
 public class MechClient extends MechCommon {
+	public static final GuiAssembler GUI_ASSEMBLER = new GuiAssembler();
+
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent event) {
 		ShootingStar.registerModels(MechConstruct.MOD_ID);
@@ -31,10 +32,5 @@ public class MechClient extends MechCommon {
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
-	}
-
-	@Override
-	public GuiAssemblerServer getGuiAssembler() {
-		return new GuiAssembler();
 	}
 }

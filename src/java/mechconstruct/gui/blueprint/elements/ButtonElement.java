@@ -4,6 +4,8 @@ import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.GuiMachine;
 import mechconstruct.gui.Sprite;
 import mechconstruct.gui.blueprint.SpriteContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ public class ButtonElement extends ElementBase {
 
 	public ButtonElement(String text, int x, int y, int width, int height, SpriteContainer... sprites) {
 		super(x, y);
+		this.text = text;
 		this.width = width;
 		this.height = height;
 		this.spriteContainers = Arrays.asList(sprites);
@@ -42,6 +45,7 @@ public class ButtonElement extends ElementBase {
 
 	@Override
 	public void draw(GuiMachine gui) {
+
 	}
 
 	public void update() {
@@ -76,31 +80,31 @@ public class ButtonElement extends ElementBase {
 		return this;
 	}
 
-	public void onHover(BlockEntityMachine machine, int mouseX, int mouseY) {
+	public void onHover(BlockEntityMachine machine, GuiMachine gui, int mouseX, int mouseY) {
 		for (Action action : hoverActions) {
-			action.execute(this, machine, mouseX, mouseY);
+			action.execute(this, gui, machine, mouseX, mouseY);
 		}
 	}
 
-	public void onDrag(BlockEntityMachine machine, int mouseX, int mouseY) {
+	public void onDrag(BlockEntityMachine machine, GuiMachine gui, int mouseX, int mouseY) {
 		for (Action action : dragActions) {
-			action.execute(this, machine, mouseX, mouseY);
+			action.execute(this, gui, machine, mouseX, mouseY);
 		}
 	}
 
-	public void onStartPress(BlockEntityMachine machine, int mouseX, int mouseY) {
+	public void onStartPress(BlockEntityMachine machine, GuiMachine gui, int mouseX, int mouseY) {
 		for (Action action : startPressActions) {
-			action.execute(this, machine, mouseX, mouseY);
+			action.execute(this, gui, machine, mouseX, mouseY);
 		}
 	}
 
-	public void onRelease(BlockEntityMachine machine, int mouseX, int mouseY) {
+	public void onRelease(BlockEntityMachine machine, GuiMachine gui, int mouseX, int mouseY) {
 		for (Action action : releaseActions) {
-			action.execute(this, machine, mouseX, mouseY);
+			action.execute(this, gui, machine, mouseX, mouseY);
 		}
 		if (isPressing) {
 			for (Action action : pressActions) {
-				action.execute(this, machine, mouseX, mouseY);
+				action.execute(this, gui, machine, mouseX, mouseY);
 			}
 		}
 	}
@@ -112,7 +116,7 @@ public class ButtonElement extends ElementBase {
 	}
 
 	public interface Action {
-		void execute(ButtonElement element, BlockEntityMachine machine, int mouseX, int mouseY);
+		void execute(ButtonElement element, GuiMachine gui, BlockEntityMachine machine, int mouseX, int mouseY);
 	}
 
 }

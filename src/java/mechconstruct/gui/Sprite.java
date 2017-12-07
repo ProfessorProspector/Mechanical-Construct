@@ -1,5 +1,7 @@
 package mechconstruct.gui;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -7,11 +9,17 @@ public class Sprite {
 	public static final Sprite SLOT_NORMAL = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 0, 18, 18);
 	public static final Sprite CHARGE_SLOT_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 18, 0, 18, 18);
 	public static final Sprite DISCHARGE_SLOT_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 36, 0, 18, 18);
-	public static final Sprite ENERGY_BAR = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 0, 18, 12, 40);
-	public static final Sprite ENERGY_BAR_BACKGROUND = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 12, 18, 14, 42);
-	public static final Sprite LEFT_TAB = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 23, 86, 23, 26);
-	public static final Sprite LEFT_TAB_SELECTED = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 0, 60, 29, 26);
-	public static final Sprite CONFIGURE_ICON = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 26, 18, 16, 16);
+	public static final Sprite ENERGY_BAR = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 18, 12, 40);
+	public static final Sprite ENERGY_BAR_BACKGROUND = new Sprite(GuiAssembler.MECH_ELEMENTS, 12, 18, 14, 42);
+	public static final Sprite LEFT_TAB = new Sprite(GuiAssembler.MECH_ELEMENTS, 23, 86, 23, 26);
+	public static final Sprite LEFT_TAB_SELECTED = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 60, 29, 26);
+	public static final Sprite CONFIGURE_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 26, 18, 16, 16);
+	public static final Sprite REDSTONE_DISABLED_ICON = new Sprite(new ItemStack(Items.GUNPOWDER));
+	public static final Sprite REDSTONE_LOW_ICON = new Sprite(new ItemStack(Items.REDSTONE));
+	public static final Sprite REDSTONE_HIGH_ICON = new Sprite(new ItemStack(Blocks.REDSTONE_TORCH));
+	public static final Sprite UPGRADE_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 26, 34, 16, 16);
+	public static final Sprite ENERGY_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 42, 18, 16, 16);
+	public static final Sprite JEI_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 42, 34, 16, 16);
 
 	public final ResourceLocation textureLocation;
 	public final int x;

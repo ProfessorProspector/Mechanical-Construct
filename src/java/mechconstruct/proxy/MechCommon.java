@@ -1,7 +1,6 @@
 package mechconstruct.proxy;
 
 import mechconstruct.MechConstruct;
-import mechconstruct.gui.GuiAssemblerServer;
 import mechconstruct.gui.MechGuiHandler;
 import mechconstruct.registry.MechRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -20,9 +19,5 @@ public class MechCommon {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-	}
-
-	public GuiAssemblerServer getGuiAssembler() {
-		return new GuiAssemblerServer();
 	}
 }

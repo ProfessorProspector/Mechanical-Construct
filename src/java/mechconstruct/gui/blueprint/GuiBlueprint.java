@@ -20,6 +20,9 @@ public class GuiBlueprint {
 	public int playerInvX = -1;
 	public int playerInvY = -1;
 	public BlockEntityMachine machine;
+	public boolean hasMainTab = true;
+	public boolean hasRedstoneControls = true;
+	public boolean hasJeiCategory = true;
 
 	public GuiBlueprint(BlockEntityMachine machine) {
 		this.machine = machine;
@@ -30,6 +33,16 @@ public class GuiBlueprint {
 	public GuiBlueprint setSize(int xSize, int ySize) {
 		this.xSize = xSize;
 		this.ySize = ySize;
+		return this;
+	}
+
+	public GuiBlueprint setHasMainTab(boolean hasMainTab) {
+		this.hasMainTab = hasMainTab;
+		return this;
+	}
+
+	public GuiBlueprint setHasRedstoneControls(boolean hasRedstoneControls) {
+		this.hasRedstoneControls = hasRedstoneControls;
 		return this;
 	}
 
