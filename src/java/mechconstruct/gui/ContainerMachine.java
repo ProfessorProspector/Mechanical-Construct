@@ -10,8 +10,11 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
+import java.util.List;
+
 public class ContainerMachine extends Container {
 	public final BlockEntityMachine machine;
+	public ItemStackHandler inventory;
 	public ItemStackHandler itemInventory;
 	public ItemStackHandler upgradeInventory;
 	public ItemStackHandler chargeInventory;

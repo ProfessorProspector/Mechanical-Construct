@@ -10,7 +10,6 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 			tabs.add(upgradesTab);
 		if (blueprint.machine.getItemInventory() != null || blueprint.machine.getEnergyInventory() != null || blueprint.machine.getFluidInventory() != null)
 			tabs.add(configureTab);
-		if (blueprint.hasJeiCategory && Loader.isModLoaded("jei"))
+		if (blueprint.hasJeiCategory/* && Loader.isModLoaded("jei")*/)
 			tabs.add(jeiTab);
 		currentTab = tabs.get(0);
 	}
@@ -115,6 +114,8 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 			for (ElementBase e : blueprint.elements) {
 				e.draw(this);
 			}
+		} else {
+			container.inventorySlots.clear();
 		}
 		for (ButtonElement button : buttons) {
 			if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
