@@ -17,7 +17,9 @@ public class MechContainer extends Container {
 		this.blueprint = blueprint;
 		this.provider = provider;
 		addSlots();
-		addPlayerSlots(player);
+		if (blueprint.playerInvX > -1 && blueprint.playerInvY > -1) {
+			addPlayerSlots(player);
+		}
 	}
 
 	private void addSlots() {

@@ -1,10 +1,14 @@
 package mechconstruct.gui;
 
+import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.blueprint.GuiTabBlueprint;
 import mechconstruct.gui.blueprint.IBlueprintProvider;
 import mechconstruct.gui.blueprint.SpriteContainer;
 import mechconstruct.gui.blueprint.elements.ButtonElement;
 import mechconstruct.gui.blueprint.elements.ElementBase;
+import mechconstruct.networking.MechPacketHandler;
+import mechconstruct.networking.PacketGuiTabItemStack;
+import mechconstruct.networking.PacketGuiTabMachine;
 import mechconstruct.proxy.MechClient;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +25,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	public ArrayList<ButtonElement> buttons = new ArrayList<>();
 
 	public MechGui(GuiTabBlueprint blueprint, EntityPlayer player) {
-		super(blueprint.provider.getContainer(blueprint.provider, blueprint, player));
+		super(blueprint.provider.getContainer(blueprint, player));
 		this.blueprint = blueprint;
 		this.provider = blueprint.provider;
 		xSize = blueprint.xSize;
@@ -41,11 +45,27 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 				width = 29;
 				sprite = Sprite.LEFT_TAB_SELECTED;
 			}
-			tab.button = new ButtonElement(x, 5 + provider.getGuiTabBlueprints().indexOf(tab) * (26 + 1), width, 26,
+			ButtonElement button = new ButtonElement(x, 5 + provider.getGuiTabBlueprints().indexOf(tab) * (26 + 1), width, 26,
 				new SpriteContainer(sprite),
 				new SpriteContainer(tab.getSprite(), 5, 5));
-			tab.button.addPressAction(tab.buttonAction);
-			buttons.add(tab.button);
+			button.addPressAction((element, gui, blueprintProvider, mouseX, mouseY) -> {
+				if (blueprintProvider.getCurrentTab() != tab) {
+					element.x = -26;
+					element.width = 29;
+					element.setSprite(0, Sprite.LEFT_TAB_SELECTED);
+					//					blueprintProvider.getCurrentTab().button.x = -23;
+					//					blueprintProvider.getCurrentTab().button.width = 23;
+					//					blueprintProvider.getCurrentTab().button.setSprite(0, Sprite.LEFT_TAB);
+					blueprintProvider.setCurrentTab(tab);
+					if (gui.blueprint.provider.getProviderType() == IBlueprintProvider.ProviderType.ITEM) {
+						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabItemStack(blueprintProvider.getGuiTabBlueprints().indexOf(this)));
+					} else if (gui.blueprint.provider.getProviderType() == IBlueprintProvider.ProviderType.MACHINE) {
+						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabMachine(((BlockEntityMachine) blueprintProvider).getPos(), blueprintProvider.getGuiTabBlueprints().indexOf(this)));
+					}
+					tab.getAdditionalAction().execute(element, gui, blueprintProvider, mouseX, mouseY);
+				}
+			});
+			buttons.add(button);
 		}
 		buttons.addAll(blueprint.buttonElements);
 	}

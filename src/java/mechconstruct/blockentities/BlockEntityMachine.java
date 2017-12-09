@@ -38,7 +38,8 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	protected boolean hasFluidInventory = false;
 	protected int costMultiplier = 0;
 	protected BlockMachine block;
-	protected GuiTabBlueprint currentTab = getGuiTabBlueprints().get(0);
+	protected GuiBlueprint mainBlueprint;
+	protected GuiTabBlueprint currentTab;
 
 	public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
 		if (inventorySize > 0) {
@@ -211,16 +212,12 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		return ProviderType.MACHINE;
 	}
 
-	public abstract GuiBlueprint getGuiBlueprint();
-
 	@Override
 	public GuiTabBlueprint getCurrentTab() {
+		if (currentTab == null) {
+			currentTab = getGuiTabBlueprints().get(0);
+		}
 		return currentTab;
-	}
-
-	@Override
-	public void setCurrentTab(int tabId) {
-
 	}
 
 	@Override
@@ -229,8 +226,13 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	}
 
 	@Override
-	public MechContainer getContainer(IBlueprintProvider provider, GuiTabBlueprint blueprint, EntityPlayer player) {
-		return new MechContainer(provider, blueprint, player);
+	public void setCurrentTab(int tabId) {
+		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
+	}
+
+	@Override
+	public MechContainer getContainer(GuiTabBlueprint blueprint, EntityPlayer player) {
+		return new MechContainer(this, blueprint, player);
 	}
 
 	@Override
@@ -241,7 +243,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	@Override
 	public List<GuiTabBlueprint> getGuiTabBlueprints() {
 		List<GuiTabBlueprint> blueprints = new ArrayList<>();
-		blueprints.add(getGuiBlueprint().makeTabBlueprint("main", new Sprite(new ItemStack(block))));
+		blueprints.add(mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block))));
 		if (hasUpgradeInventory) {
 			GuiTabBlueprint upgradesTab = new GuiTabBlueprint(this, "upgrades", Sprite.UPGRADE_ICON);
 			for (int i = 0; i < upgradeInventory.getSlots(); i++) {

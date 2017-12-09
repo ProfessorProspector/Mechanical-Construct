@@ -34,7 +34,7 @@ public interface IBlueprintProvider {
 
 	public boolean canInteractWith(EntityPlayer player);
 
-	public MechContainer getContainer(IBlueprintProvider provider, GuiTabBlueprint blueprint, EntityPlayer player);
+	public MechContainer getContainer(GuiTabBlueprint blueprint, EntityPlayer player);
 
 	public enum ProviderType {
 		MACHINE, ITEM
