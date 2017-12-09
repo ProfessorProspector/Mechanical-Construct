@@ -6,7 +6,6 @@ import mechconstruct.gui.blueprint.elements.ButtonElement;
 import mechconstruct.gui.blueprint.elements.DummySlotElement;
 import mechconstruct.gui.blueprint.elements.ElementBase;
 import mechconstruct.gui.blueprint.elements.SlotElement;
-import net.minecraftforge.items.SlotItemHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +82,7 @@ public class GuiBlueprint {
 	}
 
 	public GuiBlueprint addSlot(SlotType type, int x, int y) {
-		addSlot(new SlotElement(new SlotItemHandler(provider.getItemInventory(), slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY()), type, x, y));
+		addSlot(new SlotElement(provider.getItemInventory(), slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY(), type, x, y));
 		return this;
 	}
 

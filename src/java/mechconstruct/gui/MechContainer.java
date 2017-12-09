@@ -3,16 +3,11 @@ package mechconstruct.gui;
 import mechconstruct.gui.blueprint.GuiTabBlueprint;
 import mechconstruct.gui.blueprint.IBlueprintProvider;
 import mechconstruct.gui.blueprint.elements.SlotElement;
-import mechconstruct.util.EnergyHandler;
-import mechconstruct.util.FluidHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class MechContainer extends Container {
 	public final GuiTabBlueprint blueprint;
@@ -27,7 +22,7 @@ public class MechContainer extends Container {
 
 	private void addSlots() {
 		for (SlotElement slot : blueprint.slots) {
-			addSlotToContainer(slot.getSlot());
+			addSlotToContainer(new SlotItemHandler(slot.getSlotInventory(), slot.getSlotId(), slot.getSlotX(), slot.getSlotY()));
 		}
 	}
 

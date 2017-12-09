@@ -1,23 +1,39 @@
 package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.gui.SlotType;
-import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class SlotElement extends ElementBase {
-	protected SlotItemHandler slot;
+	protected ItemStackHandler slotInventory;
 	protected SlotType type;
+	int slotId, slotX, slotY;
 
-	public SlotElement(SlotItemHandler slot, SlotType type, int x, int y) {
+	public SlotElement(ItemStackHandler slotInventory, int slotId, int slotX, int slotY, SlotType type, int x, int y) {
 		super(type.getSprite(), x, y);
-		this.slot = slot;
 		this.type = type;
-	}
-
-	public SlotItemHandler getSlot() {
-		return slot;
+		this.slotInventory = slotInventory;
+		this.slotId = slotId;
+		this.slotX = slotX;
+		this.slotY = slotY;
 	}
 
 	public SlotType getType() {
 		return type;
+	}
+
+	public ItemStackHandler getSlotInventory() {
+		return slotInventory;
+	}
+
+	public int getSlotId() {
+		return slotId;
+	}
+
+	public int getSlotX() {
+		return slotX;
+	}
+
+	public int getSlotY() {
+		return slotY;
 	}
 }
