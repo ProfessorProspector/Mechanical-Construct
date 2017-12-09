@@ -22,7 +22,7 @@ public class GuiAssembler {
 		this.customElementSheet = null;
 	}
 
-	public void drawDefaultBackground(GuiMachine gui, int x, int y, int width, int height) {
+	public void drawDefaultBackground(MechGui gui, int x, int y, int width, int height) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
 		setTextureSheet(BACKGROUND_SHEET);
@@ -33,14 +33,14 @@ public class GuiAssembler {
 		gui.drawTexturedModalRect(x + width / 2, y + height / 2, 256 - width / 2, 256 - height / 2, width / 2, height / 2);
 	}
 
-	public void drawRect(GuiMachine gui, int x, int y, int width, int height, int colour) {
+	public void drawRect(MechGui gui, int x, int y, int width, int height, int colour) {
 		drawGradientRect(gui, x, y, width, height, colour, colour);
 	}
 
 	/*
 		Taken from Gui
 	*/
-	public void drawGradientRect(GuiMachine gui, int x, int y, int width, int height, int startColor, int endColor) {
+	public void drawGradientRect(MechGui gui, int x, int y, int width, int height, int startColor, int endColor) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
 
@@ -75,21 +75,21 @@ public class GuiAssembler {
 		GlStateManager.enableTexture2D();
 	}
 
-	public int adjustX(GuiMachine gui, int x) {
+	public int adjustX(MechGui gui, int x) {
 		return gui.getOffsetFactorX() + x;
 	}
 
-	public int adjustY(GuiMachine gui, int y) {
+	public int adjustY(MechGui gui, int y) {
 		return gui.getOffsetFactorY() + y;
 	}
 
-	public boolean isInRect(GuiMachine gui, int x, int y, int xSize, int ySize, int mouseX, int mouseY) {
+	public boolean isInRect(MechGui gui, int x, int y, int xSize, int ySize, int mouseX, int mouseY) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
 		return ((mouseX >= x && mouseX <= x + xSize) && (mouseY >= y && mouseY <= y + ySize));
 	}
 
-	public void drawPlayerSlots(GuiMachine gui, int posX, int posY, boolean center) {
+	public void drawPlayerSlots(MechGui gui, int posX, int posY, boolean center) {
 		if (center)
 			posX -= 81;
 		for (int y = 0; y < 3; y++)
@@ -101,7 +101,7 @@ public class GuiAssembler {
 		}
 	}
 
-	public void drawSlot(GuiMachine gui, int posX, int posY) {
+	public void drawSlot(MechGui gui, int posX, int posY) {
 		posX = adjustX(gui, posX);
 		posY = adjustY(gui, posY);
 		setTextureSheet(BACKGROUND_SHEET);
@@ -109,13 +109,13 @@ public class GuiAssembler {
 		gui.drawTexturedModalRect(posX, posY, 0, 0, 18, 18);
 	}
 
-	public void drawString(GuiMachine gui, String string, int x, int y, int color) {
+	public void drawString(MechGui gui, String string, int x, int y, int color) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
 		gui.mc.fontRenderer.drawString(string, x, y, color);
 	}
 
-	public void drawString(GuiMachine gui, String string, int x, int y) {
+	public void drawString(MechGui gui, String string, int x, int y) {
 		drawString(gui, string, x, y, 16777215);
 	}
 
@@ -123,11 +123,11 @@ public class GuiAssembler {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
 	}
 
-	public void drawCenteredString(GuiMachine gui, String string, int y, int colour) {
+	public void drawCenteredString(MechGui gui, String string, int y, int colour) {
 		drawString(gui, string, (gui.getXSize() / 2 - gui.mc.fontRenderer.getStringWidth(string) / 2), y, colour);
 	}
 
-	public void drawCenteredString(GuiMachine gui, String string, int x, int y, int colour) {
+	public void drawCenteredString(MechGui gui, String string, int x, int y, int colour) {
 		drawString(gui, string, (x - gui.mc.fontRenderer.getStringWidth(string) / 2), y, colour);
 	}
 
@@ -135,7 +135,7 @@ public class GuiAssembler {
 		return Minecraft.getMinecraft().fontRenderer.getStringWidth(string);
 	}
 
-	public void drawSprite(GuiMachine gui, Sprite sprite, int x, int y) {
+	public void drawSprite(MechGui gui, Sprite sprite, int x, int y) {
 		if (sprite != null) {
 			if (sprite.hasTextureInfo()) {
 				GlStateManager.color(1F, 1F, 1F);

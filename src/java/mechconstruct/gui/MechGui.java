@@ -1,92 +1,53 @@
 package mechconstruct.gui;
 
-import mechconstruct.gui.blueprint.GuiBlueprint;
+import mechconstruct.gui.blueprint.GuiTabBlueprint;
+import mechconstruct.gui.blueprint.IBlueprintProvider;
 import mechconstruct.gui.blueprint.SpriteContainer;
 import mechconstruct.gui.blueprint.elements.ButtonElement;
 import mechconstruct.gui.blueprint.elements.ElementBase;
 import mechconstruct.proxy.MechClient;
-import mechconstruct.util.RedstoneMode;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
-	public final GuiBlueprint blueprint;
-	public final GuiTab mainTab;
-	public final GuiTab energyTab;
-	public final GuiTab redstoneTab;
-	public final GuiTab upgradesTab;
-	public final GuiTab configureTab;
-	public final GuiTab jeiTab;
+public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
+	public final GuiTabBlueprint blueprint;
+	public final IBlueprintProvider provider;
 	public int xFactor;
 	public int yFactor;
-	public ContainerMachine container = (ContainerMachine) inventorySlots;
+	public MechContainer container = (MechContainer) inventorySlots;
 	public ArrayList<ButtonElement> buttons = new ArrayList<>();
-	public ArrayList<GuiTab> tabs = new ArrayList<>();
-	public RedstoneMode redstoneMode = RedstoneMode.LOW;
-	public GuiTab currentTab = null;
 
-	public GuiMachine(GuiBlueprint blueprint, EntityPlayer player) {
-		super(blueprint.machine.getContainer(player));
+	public MechGui(GuiTabBlueprint blueprint, EntityPlayer player) {
+		super(blueprint.provider.getContainer(blueprint.provider, blueprint, player));
 		this.blueprint = blueprint;
+		this.provider = blueprint.provider;
 		xSize = blueprint.xSize;
 		ySize = blueprint.ySize;
-		mainTab = new GuiTab("main", new Sprite(new ItemStack(blueprint.machine.getBlock())));
-		energyTab = new GuiTab("energy", Sprite.ENERGY_ICON);
-		redstoneTab = new GuiTab("redstone", () -> {
-			switch (redstoneMode) {
-				case LOW:
-					return Sprite.REDSTONE_LOW_ICON;
-				case HIGH:
-					return Sprite.REDSTONE_HIGH_ICON;
-				case DISABLED:
-					return Sprite.REDSTONE_DISABLED_ICON;
-			}
-			return null;
-		});
-		upgradesTab = new GuiTab("upgrades", Sprite.UPGRADE_ICON);
-		configureTab = new GuiTab("configure", Sprite.CONFIGURE_ICON);
-		jeiTab = new GuiTab("jei", Sprite.JEI_ICON, ((element, gui, machine, mouseX, mouseY) -> {
-
-		}));
-		if (blueprint.hasMainTab)
-			tabs.add(mainTab);
-		if (blueprint.machine.getEnergyInventory() != null)
-			tabs.add(energyTab);
-		if (blueprint.hasRedstoneControls)
-			tabs.add(redstoneTab);
-		if (blueprint.machine.getUpgradeInventory() != null)
-			tabs.add(upgradesTab);
-		if (blueprint.machine.getItemInventory() != null || blueprint.machine.getEnergyInventory() != null || blueprint.machine.getFluidInventory() != null)
-			tabs.add(configureTab);
-		if (blueprint.hasJeiCategory/* && Loader.isModLoaded("jei")*/)
-			tabs.add(jeiTab);
-		currentTab = tabs.get(0);
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
 		this.buttons.clear();
-		for (GuiTab tab : tabs) {
+		for (GuiTabBlueprint tab : provider.getGuiTabBlueprints()) {
 			Sprite sprite = Sprite.LEFT_TAB;
 			int x = -23;
 			int width = 23;
-			if (currentTab.equals(tab)) {
+			if (provider.getCurrentTab().equals(tab)) {
 				x = -26;
 				width = 29;
 				sprite = Sprite.LEFT_TAB_SELECTED;
 			}
-			tab.button = new ButtonElement(x, 5 + tabs.indexOf(tab) * (26 + 1), width, 26,
+			tab.button = new ButtonElement(x, 5 + provider.getGuiTabBlueprints().indexOf(tab) * (26 + 1), width, 26,
 				new SpriteContainer(sprite),
 				new SpriteContainer(tab.getSprite(), 5, 5));
-			tab.button.addPressAction(tab.getButtonAction());
+			tab.button.addPressAction(tab.buttonAction);
 			buttons.add(tab.button);
 		}
+		buttons.addAll(blueprint.buttonElements);
 	}
 
 	@Override
@@ -109,18 +70,13 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		MechClient.GUI_ASSEMBLER.drawDefaultBackground(this, 0, 0, xSize, ySize);
-		if (currentTab == mainTab) {
-			this.buttons.addAll(blueprint.buttonElements);
-			for (ElementBase e : blueprint.elements) {
-				e.draw(this);
-			}
-		} else {
-			container.inventorySlots.clear();
+		for (ElementBase e : blueprint.elements) {
+			e.draw(this);
 		}
 		for (ButtonElement button : buttons) {
 			if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
 				button.isHovering = true;
-				button.onHover(container.machine, this, mouseX, mouseY);
+				button.onHover(provider, this, mouseX, mouseY);
 			} else {
 				button.isHovering = false;
 			}
@@ -143,7 +99,7 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 	}
 
 	protected void drawTitle() {
-		MechClient.GUI_ASSEMBLER.drawCenteredString(this, I18n.format(blueprint.machine.getBlockType().getUnlocalizedName() + ".name") + ": " + currentTab.getLocalizedName(), 6, 4210752);
+		MechClient.GUI_ASSEMBLER.drawCenteredString(this, provider.getNameToDisplay() + ": " + provider.getCurrentTab().getLocalizedName(), 6, 4210752);
 	}
 
 	@Override
@@ -155,7 +111,7 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 			for (ButtonElement button : buttons) {
 				if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
 					button.isPressing = true;
-					button.onStartPress(container.machine, this, mouseX, mouseY);
+					button.onStartPress(provider, this, mouseX, mouseY);
 				} else {
 					button.isPressing = false;
 				}
@@ -172,7 +128,7 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 			for (ButtonElement button : buttons) {
 				if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
 					button.isDragging = true;
-					button.onDrag(container.machine, this, mouseX, mouseY);
+					button.onDrag(provider, this, mouseX, mouseY);
 				} else {
 					button.isDragging = false;
 				}
@@ -189,7 +145,7 @@ public class GuiMachine extends GuiContainer implements IDynamicAdjustmentGUI {
 			for (ButtonElement button : buttons) {
 				if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
 					button.isReleasing = true;
-					button.onRelease(container.machine, this, mouseX, mouseY);
+					button.onRelease(provider, this, mouseX, mouseY);
 				} else {
 					button.isReleasing = false;
 				}

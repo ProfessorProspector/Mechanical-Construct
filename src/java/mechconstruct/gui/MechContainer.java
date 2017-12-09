@@ -1,6 +1,7 @@
 package mechconstruct.gui;
 
-import mechconstruct.blockentities.BlockEntityMachine;
+import mechconstruct.gui.blueprint.GuiTabBlueprint;
+import mechconstruct.gui.blueprint.IBlueprintProvider;
 import mechconstruct.gui.blueprint.elements.SlotElement;
 import mechconstruct.util.EnergyHandler;
 import mechconstruct.util.FluidHandler;
@@ -10,31 +11,23 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerMachine extends Container {
-	public final BlockEntityMachine machine;
-	public ItemStackHandler inventory;
-	public ItemStackHandler itemInventory;
-	public ItemStackHandler upgradeInventory;
-	public ItemStackHandler chargeInventory;
-	public EnergyHandler energyInventory;
-	public FluidHandler fluidInventory;
+public class MechContainer extends Container {
+	public final GuiTabBlueprint blueprint;
+	public final IBlueprintProvider provider;
 
-	public ContainerMachine(BlockEntityMachine machine, EntityPlayer player) {
-		this.machine = machine;
-		itemInventory = machine.getItemInventory();
-		upgradeInventory = machine.getUpgradeInventory();
-		chargeInventory = machine.getChargeInventory();
-		energyInventory = machine.getEnergyInventory();
-		fluidInventory = machine.getFluidInventory();
+	public MechContainer(IBlueprintProvider provider, GuiTabBlueprint blueprint, EntityPlayer player) {
+		this.blueprint = blueprint;
+		this.provider = provider;
 		addSlots();
 		addPlayerSlots(player);
 	}
 
 	private void addSlots() {
-		for (SlotElement slotElement : machine.getGuiBlueprint().slots) {
-			addSlotToContainer(slotElement.getSlot());
+		for (SlotElement slot : blueprint.slots) {
+			addSlotToContainer(slot.getSlot());
 		}
 	}
 
@@ -42,14 +35,14 @@ public class ContainerMachine extends Container {
 		for (int row = 0; row < 3; ++row) {
 			for (int column = 0; column < 9; ++column) {
 				int index = column + row * 9 + 9;
-				int x = machine.getGuiBlueprint().playerInvX + 1 + (column * 18);
-				int y = machine.getGuiBlueprint().playerInvY + 1 + (row * 18);
+				int x = blueprint.playerInvX + 1 + (column * 18);
+				int y = blueprint.playerInvY + 1 + (row * 18);
 				addSlotToContainer(new Slot(player.inventory, index, x, y));
 			}
 		}
 		for (int column = 0; column < 9; ++column) {
-			int x = machine.getGuiBlueprint().playerInvX + 1 + (column * 18);
-			int y = machine.getGuiBlueprint().playerInvY + 1 + 58;
+			int x = blueprint.playerInvX + 1 + (column * 18);
+			int y = blueprint.playerInvY + 1 + 58;
 			addSlotToContainer(new Slot(player.inventory, column, x, y));
 		}
 	}
@@ -63,11 +56,11 @@ public class ContainerMachine extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (index < itemInventory.getSlots()) {
-				if (!this.mergeItemStack(itemstack1, itemInventory.getSlots(), this.inventorySlots.size(), true)) {
+			if (index < provider.getItemInventory().getSlots()) {
+				if (!this.mergeItemStack(itemstack1, provider.getItemInventory().getSlots(), this.inventorySlots.size(), true)) {
 					return null;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 0, itemInventory.getSlots(), false)) {
+			} else if (!this.mergeItemStack(itemstack1, 0, provider.getItemInventory().getSlots(), false)) {
 				return null;
 			}
 
@@ -83,6 +76,6 @@ public class ContainerMachine extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
-		return machine.canInteractWith(playerIn);
+		return provider.canInteractWith(playerIn);
 	}
 }

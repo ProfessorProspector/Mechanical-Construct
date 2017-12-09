@@ -2,5 +2,12 @@ itemGroup.mechconstruct=Mechanical Construct
 
 item.mechconstruct.wrench.name=Pipe Wrench
 
-machine.mechconstruct.basic.furnace.name=Basic Furnace
-machine.mechconstruct.basic.grinder.name=Basic Grinder
+provider.mechconstruct.basic.furnace.name=Basic Furnace
+provider.mechconstruct.basic.grinder.name=Basic Grinder
+
+tab.mechconstruct.main=Main
+tab.mechconstruct.energy=Energy
+tab.mechconstruct.redstone=Redstone Control
+tab.mechconstruct.upgrades=Upgrades
+tab.mechconstruct.configure=Configure
+tab.mechconstruct.jei=JEI

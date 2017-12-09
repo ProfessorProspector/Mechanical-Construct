@@ -1,6 +1,6 @@
 package mechconstruct.gui.blueprint.elements;
 
-import mechconstruct.gui.GuiMachine;
+import mechconstruct.gui.MechGui;
 import mechconstruct.proxy.MechClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,7 +44,7 @@ public class TextElement extends ElementBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void draw(GuiMachine gui) {
+	public void draw(MechGui gui) {
 		String string = text;
 		if (clipTo > -1 && gui.mc.fontRenderer.getStringWidth(string) > clipTo) {
 			string = gui.mc.fontRenderer.trimStringToWidth(text, clipTo - gui.mc.fontRenderer.getStringWidth("..."));

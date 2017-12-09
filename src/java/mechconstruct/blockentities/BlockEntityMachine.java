@@ -1,12 +1,16 @@
 package mechconstruct.blockentities;
 
 import mechconstruct.block.BlockMachine;
-import mechconstruct.gui.ContainerMachine;
+import mechconstruct.gui.MechContainer;
+import mechconstruct.gui.Sprite;
 import mechconstruct.gui.blueprint.GuiBlueprint;
+import mechconstruct.gui.blueprint.GuiTabBlueprint;
+import mechconstruct.gui.blueprint.IBlueprintProvider;
 import mechconstruct.util.EnergyHandler;
 import mechconstruct.util.EnergyUtils;
 import mechconstruct.util.FluidHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -19,8 +23,10 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class BlockEntityMachine extends TileEntity implements ITickable {
+public abstract class BlockEntityMachine extends TileEntity implements ITickable, IBlueprintProvider {
 	protected ItemStackHandler itemInventory;
 	protected ItemStackHandler upgradeInventory;
 	protected ItemStackHandler chargeInventory;
@@ -32,6 +38,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	protected boolean hasFluidInventory = false;
 	protected int costMultiplier = 0;
 	protected BlockMachine block;
+	protected GuiTabBlueprint currentTab = getGuiTabBlueprints().get(0);
 
 	public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
 		if (inventorySize > 0) {
@@ -44,6 +51,9 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 			this.hasItemInventory = true;
 		}
 		if (upgradeSlots > 0) {
+			if (upgradeSlots > 21) {
+				upgradeSlots = 21;
+			}
 			this.upgradeInventory = new ItemStackHandler(upgradeSlots) {
 				@Override
 				protected void onContentsChanged(int slot) {
@@ -162,6 +172,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		return super.hasCapability(capability, facing);
 	}
 
+	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
 	}
@@ -170,30 +181,73 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		return costMultiplier;
 	}
 
+	@Override
 	public ItemStackHandler getItemInventory() {
 		return itemInventory;
 	}
 
+	@Override
 	public ItemStackHandler getUpgradeInventory() {
 		return upgradeInventory;
 	}
 
+	@Override
 	public ItemStackHandler getChargeInventory() {
 		return chargeInventory;
 	}
 
+	@Override
 	public EnergyHandler getEnergyInventory() {
 		return energyInventory;
 	}
 
+	@Override
 	public FluidHandler getFluidInventory() {
 		return fluidInventory;
 	}
 
-	public ContainerMachine getContainer(EntityPlayer player) {
-		return new ContainerMachine(this, player);
+	@Override
+	public ProviderType getProviderType() {
+		return ProviderType.MACHINE;
 	}
 
-	@Nonnull
 	public abstract GuiBlueprint getGuiBlueprint();
+
+	@Override
+	public GuiTabBlueprint getCurrentTab() {
+		return currentTab;
+	}
+
+	@Override
+	public void setCurrentTab(int tabId) {
+
+	}
+
+	@Override
+	public void setCurrentTab(GuiTabBlueprint currentTab) {
+		this.currentTab = currentTab;
+	}
+
+	@Override
+	public MechContainer getContainer(IBlueprintProvider provider, GuiTabBlueprint blueprint, EntityPlayer player) {
+		return new MechContainer(provider, blueprint, player);
+	}
+
+	@Override
+	public String getNameToDisplay() {
+		return block.getLocalizedName();
+	}
+
+	@Override
+	public List<GuiTabBlueprint> getGuiTabBlueprints() {
+		List<GuiTabBlueprint> blueprints = new ArrayList<>();
+		blueprints.add(getGuiBlueprint().makeTabBlueprint("main", new Sprite(new ItemStack(block))));
+		if (hasUpgradeInventory) {
+			GuiTabBlueprint upgradesTab = new GuiTabBlueprint(this, "upgrades", Sprite.UPGRADE_ICON);
+			for (int i = 0; i < upgradeInventory.getSlots(); i++) {
+
+			}
+		}
+		return blueprints;
+	}
 }

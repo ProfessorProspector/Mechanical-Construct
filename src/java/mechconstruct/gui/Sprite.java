@@ -11,7 +11,7 @@ public class Sprite {
 	public static final Sprite DISCHARGE_SLOT_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 36, 0, 18, 18);
 	public static final Sprite ENERGY_BAR = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 18, 12, 40);
 	public static final Sprite ENERGY_BAR_BACKGROUND = new Sprite(GuiAssembler.MECH_ELEMENTS, 12, 18, 14, 42);
-	public static final Sprite LEFT_TAB = new Sprite(GuiAssembler.MECH_ELEMENTS, 23, 86, 23, 26);
+	public static final Sprite LEFT_TAB = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 86, 23, 26);
 	public static final Sprite LEFT_TAB_SELECTED = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 60, 29, 26);
 	public static final Sprite CONFIGURE_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 26, 18, 16, 16);
 	public static final Sprite REDSTONE_DISABLED_ICON = new Sprite(new ItemStack(Items.GUNPOWDER));

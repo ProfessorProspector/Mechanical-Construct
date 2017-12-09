@@ -49,7 +49,7 @@ public class BlockMachine extends Block {
 
 	@Override
 	public String getUnlocalizedName() {
-		return "machine." + MechConstruct.MOD_ID + "." + tier + "." + name;
+		return "provider." + MechConstruct.MOD_ID + "." + tier + "." + name;
 	}
 
 	@Override

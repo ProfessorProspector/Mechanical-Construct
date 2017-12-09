@@ -1,7 +1,7 @@
 package mechconstruct.gui.blueprint;
 
-import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.SlotType;
+import mechconstruct.gui.Sprite;
 import mechconstruct.gui.blueprint.elements.ButtonElement;
 import mechconstruct.gui.blueprint.elements.DummySlotElement;
 import mechconstruct.gui.blueprint.elements.ElementBase;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiBlueprint {
+	public IBlueprintProvider provider;
 	public List<ElementBase> elements = new ArrayList<>();
 	public List<SlotElement> slots = new ArrayList<>();
 	public List<ButtonElement> buttonElements = new ArrayList<>();
@@ -19,30 +20,15 @@ public class GuiBlueprint {
 	public int ySize = 0;
 	public int playerInvX = -1;
 	public int playerInvY = -1;
-	public BlockEntityMachine machine;
-	public boolean hasMainTab = true;
-	public boolean hasRedstoneControls = true;
-	public boolean hasJeiCategory = true;
 
-	public GuiBlueprint(BlockEntityMachine machine) {
-		this.machine = machine;
+	public GuiBlueprint(IBlueprintProvider provider) {
+		this.provider = provider;
 		setSize(176, 176);
-		setPlayerInvPos(7, 92);
 	}
 
 	public GuiBlueprint setSize(int xSize, int ySize) {
 		this.xSize = xSize;
 		this.ySize = ySize;
-		return this;
-	}
-
-	public GuiBlueprint setHasMainTab(boolean hasMainTab) {
-		this.hasMainTab = hasMainTab;
-		return this;
-	}
-
-	public GuiBlueprint setHasRedstoneControls(boolean hasRedstoneControls) {
-		this.hasRedstoneControls = hasRedstoneControls;
 		return this;
 	}
 
@@ -97,11 +83,32 @@ public class GuiBlueprint {
 	}
 
 	public GuiBlueprint addSlot(SlotType type, int x, int y) {
-		addSlot(new SlotElement(new SlotItemHandler(machine.getItemInventory(), slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY()), type, x, y));
+		addSlot(new SlotElement(new SlotItemHandler(provider.getItemInventory(), slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY()), type, x, y));
 		return this;
 	}
 
 	public GuiBlueprint addSlot(int x, int y) {
 		return addSlot(SlotType.NORMAL, x, y);
+	}
+
+	public GuiTabBlueprint makeTabBlueprint(String name, Sprite sprite, ButtonElement.Action additionalAction) {
+		GuiTabBlueprint tabBlueprint;
+		if (additionalAction == null) {
+			tabBlueprint = new GuiTabBlueprint(provider, name, sprite);
+		} else {
+			tabBlueprint = new GuiTabBlueprint(provider, name, sprite, additionalAction);
+		}
+		tabBlueprint.elements = elements;
+		tabBlueprint.slots = slots;
+		tabBlueprint.buttonElements = buttonElements;
+		tabBlueprint.xSize = xSize;
+		tabBlueprint.ySize = ySize;
+		tabBlueprint.playerInvX = playerInvX;
+		tabBlueprint.playerInvY = playerInvY;
+		return tabBlueprint;
+	}
+
+	public GuiTabBlueprint makeTabBlueprint(String name, Sprite sprite) {
+		return makeTabBlueprint(name, sprite, null);
 	}
 }

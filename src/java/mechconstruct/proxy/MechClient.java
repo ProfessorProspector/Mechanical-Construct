@@ -2,6 +2,7 @@ package mechconstruct.proxy;
 
 import mechconstruct.MechConstruct;
 import mechconstruct.gui.GuiAssembler;
+import mechconstruct.networking.MechPacketHandler;
 import mechconstruct.util.shootingstar.ShootingStar;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,6 +23,7 @@ public class MechClient extends MechCommon {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
+		MechPacketHandler.registerMessages(MechConstruct.MOD_ID);
 	}
 
 	@Override
