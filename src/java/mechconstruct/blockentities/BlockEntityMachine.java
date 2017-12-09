@@ -40,6 +40,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	protected BlockMachine block;
 	protected GuiBlueprint mainBlueprint;
 	protected GuiTabBlueprint currentTab;
+	protected List<GuiTabBlueprint> blueprints = new ArrayList<>();
 
 	public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
 		if (inventorySize > 0) {
@@ -221,13 +222,13 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	}
 
 	@Override
-	public void setCurrentTab(GuiTabBlueprint currentTab) {
-		this.currentTab = currentTab;
+	public void setCurrentTab(int tabId) {
+		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
 	}
 
 	@Override
-	public void setCurrentTab(int tabId) {
-		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
+	public void setCurrentTab(GuiTabBlueprint currentTab) {
+		this.currentTab = currentTab;
 	}
 
 	@Override
@@ -242,12 +243,25 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 
 	@Override
 	public List<GuiTabBlueprint> getGuiTabBlueprints() {
-		List<GuiTabBlueprint> blueprints = new ArrayList<>();
-		blueprints.add(mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block))));
-		if (hasUpgradeInventory) {
-			GuiTabBlueprint upgradesTab = new GuiTabBlueprint(this, "upgrades", Sprite.UPGRADE_ICON);
-			for (int i = 0; i < upgradeInventory.getSlots(); i++) {
+		if (blueprints.isEmpty()) {
+			blueprints.add(mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block))));
+			if (hasEnergyChargeInventories) {
+				GuiTabBlueprint energyTab = new GuiTabBlueprint(this, "energy", Sprite.ENERGY_ICON);
 
+				blueprints.add(energyTab);
+			}
+			if (hasUpgradeInventory) {
+				GuiTabBlueprint upgradesTab = new GuiTabBlueprint(this, "upgrades", Sprite.UPGRADE_ICON);
+				for (int i = 0; i < upgradeInventory.getSlots(); i++) {
+					int x = 7;
+					int y = 26;
+				}
+				blueprints.add(upgradesTab);
+			}
+			if (hasItemInventory || hasEnergyChargeInventories || hasFluidInventory) {
+				GuiTabBlueprint configureTab = new GuiTabBlueprint(this, "configure", Sprite.CONFIGURE_ICON);
+
+				blueprints.add(configureTab);
 			}
 		}
 		return blueprints;

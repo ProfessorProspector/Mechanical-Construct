@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	public final GuiTabBlueprint blueprint;
@@ -58,11 +59,14 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 					//					blueprintProvider.getCurrentTab().button.setSprite(0, Sprite.LEFT_TAB);
 					blueprintProvider.setCurrentTab(tab);
 					if (gui.blueprint.provider.getProviderType() == IBlueprintProvider.ProviderType.ITEM) {
-						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabItemStack(blueprintProvider.getGuiTabBlueprints().indexOf(this)));
+						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabItemStack(blueprintProvider.getGuiTabBlueprints().indexOf(tab)));
 					} else if (gui.blueprint.provider.getProviderType() == IBlueprintProvider.ProviderType.MACHINE) {
-						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabMachine(((BlockEntityMachine) blueprintProvider).getPos(), blueprintProvider.getGuiTabBlueprints().indexOf(this)));
+						List<GuiTabBlueprint> list = blueprintProvider.getGuiTabBlueprints();
+						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabMachine(((BlockEntityMachine) blueprintProvider).getPos(), list.indexOf(tab)));
 					}
-					tab.getAdditionalAction().execute(element, gui, blueprintProvider, mouseX, mouseY);
+					if (tab.getAdditionalAction() != null) {
+						tab.getAdditionalAction().execute(element, gui, blueprintProvider, mouseX, mouseY);
+					}
 				}
 			});
 			buttons.add(button);

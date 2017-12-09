@@ -1,6 +1,7 @@
 package mechconstruct.networking;
 
 import io.netty.buffer.ByteBuf;
+import mechconstruct.MechConstruct;
 import mechconstruct.blockentities.BlockEntityMachine;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +14,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketGuiTabMachine implements IMessage {
 	public BlockPos pos;
 	public int tab;
+
+	public PacketGuiTabMachine() {
+	}
 
 	public PacketGuiTabMachine(BlockPos pos, int tab) {
 		this.pos = pos;
@@ -44,6 +48,7 @@ public class PacketGuiTabMachine implements IMessage {
 			if (world.isBlockLoaded(message.pos)) {
 				BlockEntityMachine machine = (BlockEntityMachine) world.getTileEntity(message.pos);
 				machine.setCurrentTab(message.tab);
+				playerEntity.openGui(MechConstruct.instance, 0, playerEntity.getEntityWorld(), message.pos.getX(), message.pos.getY(), message.pos.getZ());
 			}
 		}
 	}

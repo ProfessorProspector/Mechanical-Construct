@@ -11,6 +11,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketGuiTabItemStack implements IMessage {
 	public int tab;
 
+	public PacketGuiTabItemStack() {
+	}
+
 	public PacketGuiTabItemStack(int tab) {
 		this.tab = tab;
 	}
