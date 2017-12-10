@@ -2,6 +2,7 @@ package mechconstruct.registry;
 
 import mechconstruct.MechConstruct;
 import mechconstruct.blockentities.BlockEntityMachine;
+import mechconstruct.registry.recipes.basic.BasicFurnaceRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -42,6 +43,10 @@ public class MechRegistry {
 		for (String entityName : MechBlocks.BLOCK_ENTITIES.keySet()) {
 			GameRegistry.registerTileEntity(MechBlocks.BLOCK_ENTITIES.get(entityName), entityName);
 		}
+	}
+
+	public static void registerRecipes() {
+		BasicFurnaceRecipes.register();
 	}
 
 	@SubscribeEvent

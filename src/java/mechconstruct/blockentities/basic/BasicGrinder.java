@@ -18,8 +18,5 @@ public class BasicGrinder extends BlockEntityMachine {
 
 	@Override
 	public void machineTick() {
-		if (!world.isRemote) {
-			System.out.println(itemInventory.getStackInSlot(0));
-		}
 	}
 }

@@ -12,6 +12,7 @@ public class MechCommon {
 
 	public void preInit(FMLPreInitializationEvent event) {
 		MechRegistry.registerBlockEntities();
+		MechRegistry.registerRecipes();
 	}
 
 	public void init(FMLInitializationEvent event) {
