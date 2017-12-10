@@ -56,7 +56,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 					element.setSprite(0, Sprite.LEFT_TAB_SELECTED);
 					//					blueprintProvider.getCurrentTab().button.x = -23;
 					//					blueprintProvider.getCurrentTab().button.width = 23;
-					//					blueprintProvider.getCurrentTab().button.setSprite(0, Sprite.LEFT_TAB);
+					//					blueprintProvider.getCurrentTab().button.setSprites(0, Sprite.LEFT_TAB);
 					blueprintProvider.setCurrentTab(tab);
 					if (gui.blueprint.provider.getProviderType() == IBlueprintProvider.ProviderType.ITEM) {
 						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabItemStack(blueprintProvider.getGuiTabBlueprints().indexOf(tab)));
@@ -94,9 +94,6 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		MechClient.GUI_ASSEMBLER.drawDefaultBackground(this, 0, 0, xSize, ySize);
-		for (ElementBase e : blueprint.elements) {
-			e.draw(this);
-		}
 		for (ButtonElement button : buttons) {
 			if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
 				button.isHovering = true;
@@ -104,11 +101,11 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 			} else {
 				button.isHovering = false;
 			}
-			button.update();
 			button.draw(this);
-			for (SpriteContainer spriteContainer : button.spriteContainers) {
-				MechClient.GUI_ASSEMBLER.drawSprite(this, spriteContainer.sprite, button.x + spriteContainer.xOffset, button.y + spriteContainer.yOffset);
-			}
+			button.update();
+		}
+		for (ElementBase e : blueprint.elements) {
+			e.draw(this);
 		}
 	}
 

@@ -9,7 +9,7 @@ public class SlotElement extends ElementBase {
 	int slotId, slotX, slotY;
 
 	public SlotElement(ItemStackHandler slotInventory, int slotId, int slotX, int slotY, SlotType type, int x, int y) {
-		super(type.getSprite(), x, y);
+		super(x, y, type.getSprite());
 		this.type = type;
 		this.slotInventory = slotInventory;
 		this.slotId = slotId;

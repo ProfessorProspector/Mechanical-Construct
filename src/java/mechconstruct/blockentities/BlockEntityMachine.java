@@ -6,6 +6,7 @@ import mechconstruct.gui.Sprite;
 import mechconstruct.gui.blueprint.GuiBlueprint;
 import mechconstruct.gui.blueprint.GuiTabBlueprint;
 import mechconstruct.gui.blueprint.IBlueprintProvider;
+import mechconstruct.gui.blueprint.elements.TextElement;
 import mechconstruct.util.EnergyHandler;
 import mechconstruct.util.EnergyUtils;
 import mechconstruct.util.FluidHandler;
@@ -252,15 +253,27 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 			}
 			if (hasUpgradeInventory) {
 				GuiTabBlueprint upgradesTab = new GuiTabBlueprint(this, "upgrades", Sprite.UPGRADE_ICON);
-				for (int i = 0; i < upgradeInventory.getSlots(); i++) {
-					int x = 7;
-					int y = 26;
+				int startX = 7;
+				int startY = 19;
+				int rows = 3;
+				int columns = (int) Math.ceil(upgradeInventory.getSlots() / (double) rows);
+				int slotNum = 0;
+				for (int column = 0; column < columns; column++) {
+					for (int row = 0; row < rows; row++) {
+						if (slotNum < upgradeInventory.getSlots()) {
+							upgradesTab.addSlot(upgradeInventory, startX + (column * 20), startY + (row * 20));
+							slotNum++;
+						} else {
+							break;
+						}
+					}
 				}
+				upgradesTab.addElement(new TextElement("Inventory", 4210752, 8, 83));
+				upgradesTab.setPlayerInvPos(7, 93);
 				blueprints.add(upgradesTab);
 			}
 			if (hasItemInventory || hasEnergyChargeInventories || hasFluidInventory) {
 				GuiTabBlueprint configureTab = new GuiTabBlueprint(this, "configure", Sprite.CONFIGURE_ICON);
-
 				blueprints.add(configureTab);
 			}
 		}

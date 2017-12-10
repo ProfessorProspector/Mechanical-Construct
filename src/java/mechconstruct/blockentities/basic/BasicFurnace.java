@@ -18,6 +18,5 @@ public class BasicFurnace extends BlockEntityMachine {
 
 	@Override
 	public void machineTick() {
-
 	}
 }

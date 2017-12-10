@@ -6,7 +6,7 @@ public class DummySlotElement extends ElementBase {
 	SlotType type;
 
 	public DummySlotElement(SlotType type, int x, int y) {
-		super(type.getSprite(), x, y);
+		super(x, y, type.getSprite());
 		this.type = type;
 	}
 

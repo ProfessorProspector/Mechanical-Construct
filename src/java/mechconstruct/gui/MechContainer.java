@@ -46,19 +46,19 @@ public class MechContainer extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-		ItemStack itemstack = null;
+		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(index);
 
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (index < provider.getItemInventory().getSlots()) {
-				if (!this.mergeItemStack(itemstack1, provider.getItemInventory().getSlots(), this.inventorySlots.size(), true)) {
-					return null;
+			if (index < blueprint.slots.size()) {
+				if (!this.mergeItemStack(itemstack1, blueprint.slots.size(), this.inventorySlots.size(), true)) {
+					return ItemStack.EMPTY;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 0, provider.getItemInventory().getSlots(), false)) {
-				return null;
+			} else if (!this.mergeItemStack(itemstack1, 0, blueprint.slots.size(), false)) {
+				return ItemStack.EMPTY;
 			}
 
 			if (itemstack1.isEmpty()) {

@@ -1,16 +1,16 @@
 package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.gui.MechGui;
-import mechconstruct.gui.Sprite;
 import mechconstruct.gui.blueprint.IBlueprintProvider;
 import mechconstruct.gui.blueprint.SpriteContainer;
+import mechconstruct.proxy.MechClient;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ButtonElement extends ElementBase {
 	public String text;
+	public int color;
 	public int width;
 	public int height;
 	public boolean isHovering = false;
@@ -27,23 +27,25 @@ public class ButtonElement extends ElementBase {
 	public List<Action> startPressActions = new ArrayList<>();
 	public List<Action> pressActions = new ArrayList<>();
 	public List<Action> releaseActions = new ArrayList<>();
-	public List<SpriteContainer> spriteContainers;
 
-	public ButtonElement(String text, int x, int y, int width, int height, SpriteContainer... sprites) {
-		super(x, y);
+	public ButtonElement(String text, int color, int x, int y, int width, int height, SpriteContainer... sprites) {
+		super(x, y, sprites);
 		this.text = text;
+		this.color = color;
 		this.width = width;
 		this.height = height;
-		this.spriteContainers = Arrays.asList(sprites);
 	}
 
 	public ButtonElement(int x, int y, int width, int height, SpriteContainer... sprites) {
-		this("", x, y, width, height, sprites);
+		this("", 0, x, y, width, height, sprites);
 	}
 
 	@Override
 	public void draw(MechGui gui) {
-
+		super.draw(gui);
+		if (!text.isEmpty()) {
+			MechClient.GUI_ASSEMBLER.drawCenteredString(gui, text, x + (width / 2), y + (height / 2), color);
+		}
 	}
 
 	public void update() {
@@ -105,12 +107,6 @@ public class ButtonElement extends ElementBase {
 				action.execute(this, gui, provider, mouseX, mouseY);
 			}
 		}
-	}
-
-	public void setSprite(int index, Sprite sprite) {
-		SpriteContainer container = spriteContainers.get(index);
-		container.sprite = sprite;
-		spriteContainers.set(index, container);
 	}
 
 	public interface Action {

@@ -6,6 +6,7 @@ import mechconstruct.gui.blueprint.elements.ButtonElement;
 import mechconstruct.gui.blueprint.elements.DummySlotElement;
 import mechconstruct.gui.blueprint.elements.ElementBase;
 import mechconstruct.gui.blueprint.elements.SlotElement;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ public class GuiBlueprint {
 
 	public GuiBlueprint addButton(ButtonElement button) {
 		this.buttonElements.add(button);
+		this.elements.add(button);
 		return this;
 	}
 
@@ -71,8 +73,8 @@ public class GuiBlueprint {
 		return addButton(new ButtonElement(x, y, width, height));
 	}
 
-	public GuiBlueprint addButton(String text, int x, int y, int width, int height) {
-		return addButton(new ButtonElement(text, x, y, width, height));
+	public GuiBlueprint addButton(String text, int color, int x, int y, int width, int height) {
+		return addButton(new ButtonElement(text, color, x, y, width, height));
 	}
 
 	public GuiBlueprint addSlot(SlotElement slot) {
@@ -82,12 +84,20 @@ public class GuiBlueprint {
 	}
 
 	public GuiBlueprint addSlot(SlotType type, int x, int y) {
-		addSlot(new SlotElement(provider.getItemInventory(), slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY(), type, x, y));
+		return addSlot(provider.getItemInventory(), type, x, y);
+	}
+
+	public GuiBlueprint addSlot(ItemStackHandler inventory, SlotType type, int x, int y) {
+		addSlot(new SlotElement(inventory, slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY(), type, x, y));
 		return this;
 	}
 
 	public GuiBlueprint addSlot(int x, int y) {
 		return addSlot(SlotType.NORMAL, x, y);
+	}
+
+	public GuiBlueprint addSlot(ItemStackHandler inventory, int x, int y) {
+		return addSlot(inventory, SlotType.NORMAL, x, y);
 	}
 
 	public GuiTabBlueprint makeTabBlueprint(String name, Sprite sprite, ButtonElement.Action additionalAction) {
