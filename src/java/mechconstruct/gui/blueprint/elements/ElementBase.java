@@ -16,6 +16,7 @@ public class ElementBase {
 	public int x;
 	public int y;
 	public List<SpriteContainer> sprites = new ArrayList<>();
+	public List<UpdateAction> actions = new ArrayList<>();
 
 	public ElementBase(int x, int y, SpriteContainer... sprites) {
 		this.sprites.addAll(Arrays.asList(sprites));
@@ -49,6 +50,17 @@ public class ElementBase {
 		}
 	}
 
+	public void update(MechGui gui) {
+		for (UpdateAction action : actions) {
+			action.update(gui, this);
+		}
+	}
+
+	public ElementBase addUpdateAction(UpdateAction action) {
+		actions.add(action);
+		return this;
+	}
+
 	public ElementBase setX(int x) {
 		this.x = x;
 		return this;
@@ -57,5 +69,9 @@ public class ElementBase {
 	public ElementBase setY(int y) {
 		this.y = y;
 		return this;
+	}
+
+	public interface UpdateAction {
+		void update(MechGui gui, ElementBase element);
 	}
 }

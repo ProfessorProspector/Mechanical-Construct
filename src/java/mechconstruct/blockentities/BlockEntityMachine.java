@@ -6,6 +6,7 @@ import mechconstruct.gui.Sprite;
 import mechconstruct.gui.blueprint.GuiBlueprint;
 import mechconstruct.gui.blueprint.GuiTabBlueprint;
 import mechconstruct.gui.blueprint.IBlueprintProvider;
+import mechconstruct.gui.blueprint.elements.EnergyBarElement;
 import mechconstruct.gui.blueprint.elements.TextElement;
 import mechconstruct.util.EnergyHandler;
 import mechconstruct.util.EnergyUtils;
@@ -42,6 +43,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	protected GuiBlueprint mainBlueprint;
 	protected GuiTabBlueprint currentTab;
 	protected List<GuiTabBlueprint> blueprints = new ArrayList<>();
+	protected List<GuiTabBlueprint> additionalBlueprints = new ArrayList<>();
 
 	public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
 		if (inventorySize > 0) {
@@ -243,12 +245,17 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	}
 
 	@Override
-	public List<GuiTabBlueprint> getGuiTabBlueprints() {
+	public final List<GuiTabBlueprint> getGuiTabBlueprints() {
 		if (blueprints.isEmpty()) {
 			blueprints.add(mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block))));
+			blueprints.addAll(additionalBlueprints);
 			if (hasEnergyChargeInventories) {
 				GuiTabBlueprint energyTab = new GuiTabBlueprint(this, "energy", Sprite.ENERGY_ICON);
-
+				energyTab.addElement(new EnergyBarElement(40, 40));
+				energyTab.syncIntegerValue(() -> energyInventory.getEnergy(), energyInventory::setEnergy);
+				energyTab.syncIntegerValue(() -> energyInventory.getCapacity(), energyInventory::setCapacity);
+				energyTab.syncIntegerValue(() -> energyInventory.getMaxInput(), energyInventory::setMaxInput);
+				energyTab.syncIntegerValue(() -> energyInventory.getMaxOutput(), energyInventory::setMaxOutput);
 				blueprints.add(energyTab);
 			}
 			if (hasUpgradeInventory) {

@@ -1,5 +1,6 @@
 package mechconstruct.gui.blueprint;
 
+import com.mojang.realmsclient.util.Pair;
 import mechconstruct.gui.SlotType;
 import mechconstruct.gui.Sprite;
 import mechconstruct.gui.blueprint.elements.ButtonElement;
@@ -10,8 +11,12 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 public class GuiBlueprint {
+	public final List<Pair<IntSupplier, IntConsumer>> shortSyncables = new ArrayList<>();
+	public final List<Pair<IntSupplier, IntConsumer>> intSyncables = new ArrayList<>();
 	public IBlueprintProvider provider;
 	public List<ElementBase> elements = new ArrayList<>();
 	public List<SlotElement> slots = new ArrayList<>();
@@ -98,6 +103,16 @@ public class GuiBlueprint {
 
 	public GuiBlueprint addSlot(ItemStackHandler inventory, int x, int y) {
 		return addSlot(inventory, SlotType.NORMAL, x, y);
+	}
+
+	public GuiBlueprint syncIntegerValue(final IntSupplier supplier, final IntConsumer setter) {
+		this.intSyncables.add(Pair.of(supplier, setter));
+		return this;
+	}
+
+	public GuiBlueprint syncShortValue(final IntSupplier supplier, final IntConsumer setter) {
+		this.shortSyncables.add(Pair.of(supplier, setter));
+		return this;
 	}
 
 	public GuiTabBlueprint makeTabBlueprint(String name, Sprite sprite, ButtonElement.Action additionalAction) {

@@ -6,9 +6,9 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 public class MechRecipe {
-	public String recipeType;
-	private ArrayList<Object> inputs;
-	private ArrayList<Object> outputs;
+	public final String recipeType;
+	private final ArrayList<Object> inputs;
+	private final ArrayList<Object> outputs;
 
 	public MechRecipe(String recipeType) {
 		inputs = new ArrayList<>();

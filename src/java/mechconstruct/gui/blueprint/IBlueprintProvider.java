@@ -6,6 +6,7 @@ import mechconstruct.util.FluidHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.items.ItemStackHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IBlueprintProvider {
@@ -26,9 +27,9 @@ public interface IBlueprintProvider {
 
 	public GuiTabBlueprint getCurrentTab();
 
-	public void setCurrentTab(GuiTabBlueprint blueprint);
-
 	public void setCurrentTab(int tabId);
+
+	public void setCurrentTab(GuiTabBlueprint blueprint);
 
 	public ProviderType getProviderType();
 
