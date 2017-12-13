@@ -122,7 +122,7 @@ public class BlockMachine extends Block {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldIn.getTileEntity(pos) != null) {
 			playerIn.openGui(MechConstruct.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
-			return false;
+			return true;
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
 	}

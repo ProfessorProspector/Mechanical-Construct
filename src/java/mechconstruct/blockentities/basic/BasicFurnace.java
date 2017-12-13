@@ -25,19 +25,22 @@ public class BasicFurnace extends BlockEntityMachine {
 
 	@Override
 	public void machineTick() {
-		System.out.println(energyInventory.getEnergy() + " / " + energyInventory.getCapacity() + " (I/O : " + energyInventory.getMaxInput() + " / " + energyInventory.getMaxOutput());
-		ArrayList<Object> inputs = new ArrayList<>();
-		inputs.add(itemInventory.getStackInSlot(0));
-		currentRecipe = RecipeUtils.getValidRecipe("basic_furnace", inputs);
-		if (currentRecipe != null) {
-			itemInventory.extractItem(0, 1, false);
-			itemInventory.insertItem(1, ((ItemStack) currentRecipe.getOutputs().get(0)).copy(), false);
-		}
-		if (energyInventory.getEnergy() > energyInventory.getCapacity()) {
-			energyInventory.receiveEnergy(1, false);
-		}
-		if (energyInventory.getEnergy() == energyInventory.getCapacity()) {
-			energyInventory.extractEnergy(energyInventory.getCapacity(), false);
+		if (!world.isRemote) {
+			ArrayList<Object> inputs = new ArrayList<>();
+			inputs.add(itemInventory.getStackInSlot(0));
+			currentRecipe = RecipeUtils.getValidRecipe("basic_furnace", inputs);
+			if (currentRecipe != null) {
+				itemInventory.extractItem(0, 1, false);
+				itemInventory.insertItem(1, ((ItemStack) currentRecipe.getOutputs().get(0)).copy(), false);
+			}
+			if (energyInventory.getEnergy() < energyInventory.getCapacity()) {
+				energyInventory.receiveEnergy(1, false);
+			}
+			if (energyInventory.getEnergy() == energyInventory.getCapacity()) {
+				energyInventory.setEnergy(0);
+			}
+			System.out.println(energyInventory.getEnergy());
+			;
 		}
 	}
 }

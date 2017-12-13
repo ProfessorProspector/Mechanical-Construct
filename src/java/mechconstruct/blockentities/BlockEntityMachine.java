@@ -225,13 +225,13 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	}
 
 	@Override
-	public void setCurrentTab(int tabId) {
-		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
+	public void setCurrentTab(GuiTabBlueprint currentTab) {
+		this.currentTab = currentTab;
 	}
 
 	@Override
-	public void setCurrentTab(GuiTabBlueprint currentTab) {
-		this.currentTab = currentTab;
+	public void setCurrentTab(int tabId) {
+		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
 	}
 
 	@Override

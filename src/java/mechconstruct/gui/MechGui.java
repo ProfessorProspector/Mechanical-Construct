@@ -94,18 +94,18 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		MechClient.GUI_ASSEMBLER.drawDefaultBackground(this, 0, 0, xSize, ySize);
+		for (ElementBase e : blueprint.elements) {
+			e.draw(this);
+		}
 		for (ButtonElement button : buttons) {
+			button.draw(this);
 			if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
 				button.isHovering = true;
 				button.onHover(provider, this, mouseX, mouseY);
 			} else {
 				button.isHovering = false;
 			}
-			button.draw(this);
 			button.update();
-		}
-		for (ElementBase e : blueprint.elements) {
-			e.draw(this);
 		}
 	}
 

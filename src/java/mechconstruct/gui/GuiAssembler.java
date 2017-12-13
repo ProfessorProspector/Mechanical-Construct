@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -155,5 +156,25 @@ public class GuiAssembler {
 				GlStateManager.popMatrix();
 			}
 		}
+	}
+
+	public int getScaledBurnTime(int scale, int burnTime, int totalBurnTime) {
+		return (int) (((float) burnTime / (float) totalBurnTime) * scale);
+	}
+
+	public TextFormatting getPercentageColour(int percentage) {
+		if (percentage <= 10) {
+			return TextFormatting.RED;
+		} else if (percentage >= 75) {
+			return TextFormatting.GREEN;
+		} else {
+			return TextFormatting.YELLOW;
+		}
+	}
+
+	public int getPercentage(int MaxValue, int CurrentValue) {
+		if (CurrentValue == 0)
+			return 0;
+		return (int) ((CurrentValue * 100.0f) / MaxValue);
 	}
 }

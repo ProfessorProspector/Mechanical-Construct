@@ -64,6 +64,9 @@ public class GuiBlueprint {
 	}
 
 	public GuiBlueprint addElement(ElementBase element) {
+		if (element instanceof ButtonElement) {
+			return addButton((ButtonElement) element);
+		}
 		this.elements.add(element);
 		return this;
 	}
