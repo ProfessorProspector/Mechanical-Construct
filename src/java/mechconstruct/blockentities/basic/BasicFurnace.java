@@ -39,8 +39,6 @@ public class BasicFurnace extends BlockEntityMachine {
 			if (energyInventory.getEnergy() == energyInventory.getCapacity()) {
 				energyInventory.setEnergy(0);
 			}
-			System.out.println(energyInventory.getEnergy());
-			;
 		}
 	}
 }

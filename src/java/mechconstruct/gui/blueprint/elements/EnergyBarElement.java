@@ -1,8 +1,7 @@
 package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.gui.MechGui;
-import mechconstruct.gui.Sprite;
-import mechconstruct.gui.blueprint.SpriteContainer;
+import mechconstruct.gui.blueprint.Sprite;
 import mechconstruct.proxy.MechClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
@@ -10,13 +9,13 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnergyBarElement extends ButtonElement {
+public class EnergyBarElement extends ElementBase {
 	public int energy;
 	public int capacity;
 	public int energyBarHeight = Sprite.ENERGY_BAR.height;
 
 	public EnergyBarElement(int x, int y) {
-		super(x, y, Sprite.ENERGY_BAR_BACKGROUND.width, Sprite.ENERGY_BAR_BACKGROUND.height, new SpriteContainer(Sprite.ENERGY_BAR_BACKGROUND));
+		super(x, y, Sprite.ENERGY_BAR_BACKGROUND);
 		addHoverAction((element, gui, provider, mouseX, mouseY) -> {
 			if (MechClient.GUI_ASSEMBLER.isInRect(gui, x + 1, y + 1, Sprite.ENERGY_BAR.width, Sprite.ENERGY_BAR.height, mouseX, mouseY)) {
 				int percentage = MechClient.GUI_ASSEMBLER.getPercentage(capacity, energy);
@@ -46,6 +45,6 @@ public class EnergyBarElement extends ButtonElement {
 			draw = (int) ((double) capacity / capacity * energyBarHeight);
 		}
 
-		MechClient.GUI_ASSEMBLER.drawSprite(gui, new Sprite(Sprite.ENERGY_BAR.textureLocation, Sprite.ENERGY_BAR.x, Sprite.ENERGY_BAR.y + Sprite.ENERGY_BAR.height - draw, Sprite.ENERGY_BAR.width, draw), x + 1, y + 1 + Sprite.ENERGY_BAR.height - draw);
+		MechClient.GUI_ASSEMBLER.drawSprite(gui, new Sprite(Sprite.ENERGY_BAR.textureLocation, Sprite.ENERGY_BAR.x, Sprite.ENERGY_BAR.y + energyBarHeight - draw, Sprite.ENERGY_BAR.width, draw), x + 1, y + 1 + energyBarHeight - draw);
 	}
 }

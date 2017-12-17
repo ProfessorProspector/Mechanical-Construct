@@ -1,5 +1,7 @@
 package mechconstruct.gui;
 
+import mechconstruct.gui.blueprint.Sprite;
+
 public enum SlotType {
 	NORMAL(1, 1, Sprite.SLOT_NORMAL);
 

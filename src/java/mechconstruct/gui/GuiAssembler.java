@@ -1,6 +1,8 @@
 package mechconstruct.gui;
 
 import mechconstruct.MechConstruct;
+import mechconstruct.gui.blueprint.ISprite;
+import mechconstruct.gui.blueprint.Sprite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -136,7 +138,8 @@ public class GuiAssembler {
 		return Minecraft.getMinecraft().fontRenderer.getStringWidth(string);
 	}
 
-	public void drawSprite(MechGui gui, Sprite sprite, int x, int y) {
+	public void drawSprite(MechGui gui, ISprite iSprite, int x, int y) {
+		Sprite sprite = iSprite.getSprite(gui.provider);
 		if (sprite != null) {
 			if (sprite.hasTextureInfo()) {
 				GlStateManager.color(1F, 1F, 1F);

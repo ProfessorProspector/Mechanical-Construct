@@ -2,12 +2,11 @@ package mechconstruct.blockentities;
 
 import mechconstruct.block.BlockMachine;
 import mechconstruct.gui.MechContainer;
-import mechconstruct.gui.Sprite;
-import mechconstruct.gui.blueprint.GuiBlueprint;
-import mechconstruct.gui.blueprint.GuiTabBlueprint;
-import mechconstruct.gui.blueprint.IBlueprintProvider;
+import mechconstruct.gui.blueprint.*;
+import mechconstruct.gui.blueprint.elements.ElementBase;
 import mechconstruct.gui.blueprint.elements.EnergyBarElement;
 import mechconstruct.gui.blueprint.elements.TextElement;
+import mechconstruct.gui.blueprint.elements.TopEnergyBarElement;
 import mechconstruct.util.EnergyHandler;
 import mechconstruct.util.EnergyUtils;
 import mechconstruct.util.FluidHandler;
@@ -27,6 +26,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 public abstract class BlockEntityMachine extends TileEntity implements ITickable, IBlueprintProvider {
 	protected ItemStackHandler itemInventory;
@@ -247,15 +248,29 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	@Override
 	public final List<GuiTabBlueprint> getGuiTabBlueprints() {
 		if (blueprints.isEmpty()) {
-			blueprints.add(mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block))));
+			List<ElementBase> universalElements = new ArrayList<>();
+			List<Syncable> universalSyncables = new ArrayList<>();
+			GuiTabBlueprint mainTab = mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block)));
+			blueprints.add(mainTab);
 			blueprints.addAll(additionalBlueprints);
 			if (hasEnergyChargeInventories) {
-				GuiTabBlueprint energyTab = new GuiTabBlueprint(this, "energy", Sprite.ENERGY_ICON);
-				energyTab.addElement(new EnergyBarElement(40, 40));
+				GuiTabBlueprint energyTab = new GuiTabBlueprint(this, "energy", new SpriteContainer().addSprite(Sprite.ENERGY_ICON_EMPTY, 8, 6).addSprite((provider) -> {
+					int iconHeight = Sprite.ENERGY_ICON.height;
+					int energy = provider.getEnergyInventory().getEnergy();
+					int capacity = provider.getEnergyInventory().getCapacity();
+					int draw = (int) ((double) energy / (double) capacity * iconHeight);
+					if (energy > capacity) {
+						draw = (int) ((double) capacity / capacity * iconHeight);
+					}
+					return new Sprite(Sprite.ENERGY_ICON.textureLocation, Sprite.ENERGY_ICON.x, Sprite.ENERGY_ICON.y + iconHeight - draw, Sprite.ENERGY_ICON.width, draw).setOffsetX(8).setOffsetY(6 + iconHeight - draw);
+				}));
+				energyTab.addElement(new EnergyBarElement(81, 27));
 				energyTab.syncIntegerValue(() -> energyInventory.getEnergy(), energyInventory::setEnergy);
 				energyTab.syncIntegerValue(() -> energyInventory.getCapacity(), energyInventory::setCapacity);
 				energyTab.syncIntegerValue(() -> energyInventory.getMaxInput(), energyInventory::setMaxInput);
 				energyTab.syncIntegerValue(() -> energyInventory.getMaxOutput(), energyInventory::setMaxOutput);
+				energyTab.addElement(new TextElement("Inventory", 4210752, 8, 83));
+				energyTab.setPlayerInvPos(7, 93);
 				blueprints.add(energyTab);
 			}
 			if (hasUpgradeInventory) {
@@ -283,7 +298,61 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 				GuiTabBlueprint configureTab = new GuiTabBlueprint(this, "configure", Sprite.CONFIGURE_ICON);
 				blueprints.add(configureTab);
 			}
+			universalElements.add(new TopEnergyBarElement(3, -3));
+			universalSyncables.add(new Syncable(() -> energyInventory.getEnergy(), energyInventory::setEnergy));
+			universalSyncables.add(new Syncable(() -> energyInventory.getCapacity(), energyInventory::setCapacity));
+
+			universalElements.addAll(getUniversalElements());
+			universalSyncables.addAll(getUniversalSyncables());
+			for (GuiTabBlueprint blueprint : blueprints) {
+				for (Syncable syncable : universalSyncables) {
+					if (syncable.isShort) {
+						blueprint.syncShortValue(syncable.getIntSupplier(), syncable.getIntConsumer());
+					} else {
+						blueprint.syncIntegerValue(syncable.getIntSupplier(), syncable.getIntConsumer());
+					}
+				}
+				for (ElementBase element : universalElements) {
+					blueprint.addElement(element);
+				}
+			}
 		}
 		return blueprints;
+	}
+
+	public List<ElementBase> getUniversalElements() {
+		return new ArrayList<>();
+	}
+
+	public List<Syncable> getUniversalSyncables() {
+		return new ArrayList<>();
+	}
+
+	public class Syncable {
+		private IntSupplier intSupplier;
+		private IntConsumer intConsumer;
+		private boolean isShort;
+
+		public Syncable(IntSupplier intSupplier, IntConsumer intConsumer) {
+			this(intSupplier, intConsumer, false);
+		}
+
+		public Syncable(IntSupplier intSupplier, IntConsumer intConsumer, boolean isShort) {
+			this.intSupplier = intSupplier;
+			this.intConsumer = intConsumer;
+			this.isShort = isShort;
+		}
+
+		public IntSupplier getIntSupplier() {
+			return intSupplier;
+		}
+
+		public IntConsumer getIntConsumer() {
+			return intConsumer;
+		}
+
+		public boolean isShort() {
+			return isShort;
+		}
 	}
 }

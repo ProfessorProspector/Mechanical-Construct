@@ -3,15 +3,16 @@ package mechconstruct.gui;
 import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.blueprint.GuiTabBlueprint;
 import mechconstruct.gui.blueprint.IBlueprintProvider;
-import mechconstruct.gui.blueprint.SpriteContainer;
-import mechconstruct.gui.blueprint.elements.ButtonElement;
+import mechconstruct.gui.blueprint.Sprite;
 import mechconstruct.gui.blueprint.elements.ElementBase;
 import mechconstruct.networking.MechPacketHandler;
 import mechconstruct.networking.PacketGuiTabItemStack;
 import mechconstruct.networking.PacketGuiTabMachine;
 import mechconstruct.proxy.MechClient;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	public int xFactor;
 	public int yFactor;
 	public MechContainer container = (MechContainer) inventorySlots;
-	public ArrayList<ButtonElement> buttons = new ArrayList<>();
+	public ArrayList<ElementBase> elements = new ArrayList<>();
 
 	public MechGui(GuiTabBlueprint blueprint, EntityPlayer player) {
 		super(blueprint.provider.getContainer(blueprint, player));
@@ -36,7 +37,8 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	@Override
 	public void initGui() {
 		super.initGui();
-		this.buttons.clear();
+		this.elements.clear();
+		elements.addAll(blueprint.elements);
 		for (GuiTabBlueprint tab : provider.getGuiTabBlueprints()) {
 			Sprite sprite = Sprite.LEFT_TAB;
 			int x = -23;
@@ -46,17 +48,24 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 				width = 29;
 				sprite = Sprite.LEFT_TAB_SELECTED;
 			}
-			ButtonElement button = new ButtonElement(x, 5 + provider.getGuiTabBlueprints().indexOf(tab) * (26 + 1), width, 26,
-				new SpriteContainer(sprite),
-				new SpriteContainer(tab.getSprite(), 5, 5));
+			ElementBase button = new ElementBase(x, 5 + provider.getGuiTabBlueprints().indexOf(tab) * (26 + 1), width, 26, sprite);
+			int spriteSize = button.container.offsetSprites.size();
+			button.addUpdateAction((gui, element) -> {
+				if (!tab.getSpriteContainer().offsetSprites.isEmpty()) {
+					if (element.container.offsetSprites.size() == spriteSize) {
+						element.container.offsetSprites.addAll(tab.getSpriteContainer().offsetSprites);
+					} else {
+						for (int i = spriteSize; i < tab.getSpriteContainer().offsetSprites.size(); i++) {
+							element.container.offsetSprites.set(i, tab.getSpriteContainer().offsetSprites.get(i - spriteSize));
+						}
+					}
+				}
+			});
 			button.addPressAction((element, gui, blueprintProvider, mouseX, mouseY) -> {
 				if (blueprintProvider.getCurrentTab() != tab) {
 					element.x = -26;
-					element.width = 29;
-					element.setSprite(0, Sprite.LEFT_TAB_SELECTED);
-					//					blueprintProvider.getCurrentTab().button.x = -23;
-					//					blueprintProvider.getCurrentTab().button.width = 23;
-					//					blueprintProvider.getCurrentTab().button.setSprites(0, Sprite.LEFT_TAB);
+					element.setWidth(29);
+					element.container.setSprite(0, Sprite.LEFT_TAB_SELECTED);
 					blueprintProvider.setCurrentTab(tab);
 					if (gui.blueprint.provider.getProviderType() == IBlueprintProvider.ProviderType.ITEM) {
 						MechPacketHandler.networkWrapper.sendToServer(new PacketGuiTabItemStack(blueprintProvider.getGuiTabBlueprints().indexOf(tab)));
@@ -69,9 +78,16 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 					}
 				}
 			});
-			buttons.add(button);
+			button.addHoverAction((element, gui, blueprintProvider, mouseX, mouseY) -> {
+				List<String> list = new ArrayList<>();
+				TextFormatting color = TextFormatting.WHITE;
+				list.add(color + tab.getLocalizedName());
+				net.minecraftforge.fml.client.config.GuiUtils.drawHoveringText(list, mouseX, mouseY, gui.width, gui.height, -1, gui.mc.fontRenderer);
+				GlStateManager.disableLighting();
+				GlStateManager.color(1, 1, 1, 1);
+			});
+			elements.add(button);
 		}
-		buttons.addAll(blueprint.buttonElements);
 	}
 
 	@Override
@@ -86,7 +102,6 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		xFactor = 0;
 		yFactor = 0;
-		drawTitle();
 	}
 
 	@Override
@@ -94,18 +109,16 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		MechClient.GUI_ASSEMBLER.drawDefaultBackground(this, 0, 0, xSize, ySize);
-		for (ElementBase e : blueprint.elements) {
-			e.draw(this);
-		}
-		for (ButtonElement button : buttons) {
-			button.draw(this);
-			if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
-				button.isHovering = true;
-				button.onHover(provider, this, mouseX, mouseY);
+		drawTitle();
+		for (ElementBase element : elements) {
+			element.draw(this);
+			if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+				element.isHovering = true;
+				element.onHover(provider, this, mouseX, mouseY);
 			} else {
-				button.isHovering = false;
+				element.isHovering = false;
 			}
-			button.update();
+			element.update(this);
 		}
 	}
 
@@ -121,6 +134,8 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 
 	protected void drawTitle() {
 		MechClient.GUI_ASSEMBLER.drawCenteredString(this, provider.getNameToDisplay() + ": " + provider.getCurrentTab().getLocalizedName(), 6, 4210752);
+		GlStateManager.disableLighting();
+		GlStateManager.color(1, 1, 1, 1);
 	}
 
 	@Override
@@ -129,12 +144,12 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		if (mouseButton == 0) {
-			for (ButtonElement button : buttons) {
-				if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
-					button.isPressing = true;
-					button.onStartPress(provider, this, mouseX, mouseY);
+			for (ElementBase element : elements) {
+				if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+					element.isPressing = true;
+					element.onStartPress(provider, this, mouseX, mouseY);
 				} else {
-					button.isPressing = false;
+					element.isPressing = false;
 				}
 			}
 		}
@@ -146,12 +161,12 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		if (mouseButton == 0) {
-			for (ButtonElement button : buttons) {
-				if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
-					button.isDragging = true;
-					button.onDrag(provider, this, mouseX, mouseY);
+			for (ElementBase element : elements) {
+				if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+					element.isDragging = true;
+					element.onDrag(provider, this, mouseX, mouseY);
 				} else {
-					button.isDragging = false;
+					element.isDragging = false;
 				}
 			}
 		}
@@ -163,14 +178,14 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		if (mouseButton == 0) {
-			for (ButtonElement button : buttons) {
-				if (MechClient.GUI_ASSEMBLER.isInRect(this, button.x, button.y, button.width, button.height, mouseX, mouseY)) {
-					button.isReleasing = true;
-					button.onRelease(provider, this, mouseX, mouseY);
+			for (ElementBase element : elements) {
+				if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+					element.isReleasing = true;
+					element.onRelease(provider, this, mouseX, mouseY);
 				} else {
-					button.isReleasing = false;
+					element.isReleasing = false;
 				}
-				button.isPressing = false;
+				element.isPressing = false;
 			}
 		}
 	}
