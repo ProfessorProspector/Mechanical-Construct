@@ -19,7 +19,7 @@ public class ConfigSlotElement extends ElementBase {
 		this.inventory = slotInventory;
 		this.id = slotId;
 		addPressAction(((element, gui, provider, mouseX, mouseY) -> {
-
+			gui.elements.add(new SlotConfigPopupElement(((ConfigSlotElement) element).id, x - 22, y - 22));
 		}));
 	}
 
@@ -40,6 +40,9 @@ public class ConfigSlotElement extends ElementBase {
 		GlStateManager.disableDepth();
 		GlStateManager.disableLighting();
 		GlStateManager.popMatrix();
+		if (isPressing) {
+			MechClient.GUI_ASSEMBLER.drawSprite(gui, type.getSprite(), x, y);
+		}
 		if (isHovering) {
 			MechClient.GUI_ASSEMBLER.drawSprite(gui, type.getButtonHoverOverlay(), x, y);
 		}

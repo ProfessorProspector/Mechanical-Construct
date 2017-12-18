@@ -127,19 +127,20 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 			element.draw(this);
 		}
 		for (int i = elements.size() - 1; i >= 0; i--) {
-			if (MechClient.GUI_ASSEMBLER.isInRect(this, elements.get(i).x, elements.get(i).y, elements.get(i).getWidth(provider), elements.get(i).getHeight(provider), mouseX, mouseY)) {
-				elements.get(i).isHovering = true;
-				elements.get(i).onHover(provider, this, mouseX, mouseY);
-				for (ElementBase element : elements) {
-					if (element != elements.get(i)) {
-						element.isHovering = false;
+			ElementBase element = elements.get(i);
+			if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+				element.isHovering = true;
+				element.onHover(provider, this, mouseX, mouseY);
+				for (ElementBase e : elements) {
+					if (e != element) {
+						e.isHovering = false;
 					}
 				}
 				break;
 			} else {
-				elements.get(i).isHovering = false;
+				element.isHovering = false;
 			}
-			elements.get(i).renderUpdate(this);
+			element.renderUpdate(this);
 		}
 		drawTitle();
 	}
@@ -174,17 +175,18 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		yFactor = guiTop;
 		if (mouseButton == 0) {
 			for (int i = elements.size() - 1; i >= 0; i--) {
-				if (MechClient.GUI_ASSEMBLER.isInRect(this, elements.get(i).x, elements.get(i).y, elements.get(i).getWidth(provider), elements.get(i).getHeight(provider), mouseX, mouseY)) {
-					elements.get(i).isPressing = true;
-					elements.get(i).onStartPress(provider, this, mouseX, mouseY);
-					for (ElementBase element : elements) {
-						if (element != elements.get(i)) {
-							element.isPressing = false;
+				ElementBase element = elements.get(i);
+				if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+					element.isPressing = true;
+					element.onStartPress(provider, this, mouseX, mouseY);
+					for (ElementBase e : elements) {
+						if (e != element) {
+							e.isPressing = false;
 						}
 					}
 					break;
 				} else {
-					elements.get(i).isPressing = false;
+					element.isPressing = false;
 				}
 			}
 		}
@@ -197,17 +199,18 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		yFactor = guiTop;
 		if (mouseButton == 0) {
 			for (int i = elements.size() - 1; i >= 0; i--) {
-				if (MechClient.GUI_ASSEMBLER.isInRect(this, elements.get(i).x, elements.get(i).y, elements.get(i).getWidth(provider), elements.get(i).getHeight(provider), mouseX, mouseY)) {
-					elements.get(i).isDragging = true;
-					elements.get(i).onDrag(provider, this, mouseX, mouseY);
-					for (ElementBase element : elements) {
-						if (element != elements.get(i)) {
-							element.isDragging = false;
+				ElementBase element = elements.get(i);
+				if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+					element.isDragging = true;
+					element.onDrag(provider, this, mouseX, mouseY);
+					for (ElementBase e : elements) {
+						if (e != element) {
+							e.isDragging = false;
 						}
 					}
 					break;
 				} else {
-					elements.get(i).isDragging = false;
+					element.isDragging = false;
 				}
 			}
 		}
@@ -220,17 +223,18 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		yFactor = guiTop;
 		if (mouseButton == 0) {
 			for (int i = elements.size() - 1; i >= 0; i--) {
-				if (MechClient.GUI_ASSEMBLER.isInRect(this, elements.get(i).x, elements.get(i).y, elements.get(i).getWidth(provider), elements.get(i).getHeight(provider), mouseX, mouseY)) {
-					elements.get(i).isReleasing = true;
-					elements.get(i).onRelease(provider, this, mouseX, mouseY);
-					for (ElementBase element : elements) {
-						if (element != elements.get(i)) {
-							element.isReleasing = false;
+				ElementBase element = elements.get(i);
+				if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
+					element.isReleasing = true;
+					element.onRelease(provider, this, mouseX, mouseY);
+					for (ElementBase e : elements) {
+						if (e != element) {
+							e.isReleasing = false;
 						}
 					}
 					break;
 				} else {
-					elements.get(i).isReleasing = false;
+					element.isReleasing = false;
 				}
 			}
 		}

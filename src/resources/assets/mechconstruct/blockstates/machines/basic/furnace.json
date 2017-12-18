@@ -2,12 +2,14 @@
   "forge_marker": 1,
   "defaults": {
     "transform": "forge:default-block",
-    "model": "orientable",
+    "model": "mechconstruct:machine",
     "textures": {
       "particle": "mechconstruct:blocks/machines/basic/furnace_front_off",
       "top": "mechconstruct:blocks/machines/basic/machine_top",
-      "down": "mechconstruct:blocks/machines/basic/machine_bottom",
-      "side": "mechconstruct:blocks/machines/basic/machine_side"
+      "bottom": "mechconstruct:blocks/machines/basic/machine_bottom",
+      "left": "mechconstruct:blocks/machines/basic/machine_side",
+      "right": "mechconstruct:blocks/machines/basic/machine_side",
+      "back": "mechconstruct:blocks/machines/basic/machine_side"
     }
   },
   "variants": {
