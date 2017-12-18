@@ -13,7 +13,7 @@ public class BasicGrinder extends BlockEntityMachine {
 			.setPlayerInvPos(7, 93)
 			.addElement(new TextElement("Inventory", 4210752, 8, 83))
 			.addSlot(SlotType.NORMAL, 20, 20)
-			.addSlot(SlotType.NORMAL, 20, 40);
+			.addSlot(SlotType.NORMAL, 20, 30);
 	}
 
 	@Override
