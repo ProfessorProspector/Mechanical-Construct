@@ -29,7 +29,8 @@ public class ElementBase {
 	public List<ElementBase.Action> pressActions = new ArrayList<>();
 	public List<ElementBase.Action> releaseActions = new ArrayList<>();
 	public SpriteContainer container;
-	public List<UpdateAction> actions = new ArrayList<>();
+	public List<UpdateAction> updateActions = new ArrayList<>();
+	public List<UpdateAction> buttonUpdate = new ArrayList<>();
 	private int width;
 	private int height;
 
@@ -92,24 +93,26 @@ public class ElementBase {
 	}
 
 	public void draw(MechGui gui) {
-		System.out.println(getSpriteContainer().offsetSprites);
 		for (OffsetSprite sprite : getSpriteContainer().offsetSprites) {
 			MechClient.GUI_ASSEMBLER.drawSprite(gui, sprite.getSprite(), x + sprite.getOffsetX(gui.provider), y + sprite.getOffsetY(gui.provider));
 		}
 	}
 
-	public void update(MechGui gui) {
+	public void renderUpdate(MechGui gui) {
 		isHoveringLast = isHovering;
 		isPressingLast = isPressing;
 		isDraggingLast = isDragging;
 		isReleasingLast = isReleasing;
-		for (UpdateAction action : actions) {
+	}
+
+	public void update(MechGui gui) {
+		for (UpdateAction action : updateActions) {
 			action.update(gui, this);
 		}
 	}
 
 	public ElementBase addUpdateAction(UpdateAction action) {
-		actions.add(action);
+		updateActions.add(action);
 		return this;
 	}
 

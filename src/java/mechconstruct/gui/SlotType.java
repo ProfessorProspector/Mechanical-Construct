@@ -3,16 +3,20 @@ package mechconstruct.gui;
 import mechconstruct.gui.blueprint.Sprite;
 
 public enum SlotType {
-	NORMAL(1, 1, Sprite.SLOT_NORMAL);
+	NORMAL(1, 1, Sprite.SLOT_NORMAL, Sprite.BUTTON_SLOT_NORMAL, Sprite.BUTTON_HOVER_OVERLAY_SLOT_NORMAL);
 
 	int slotOffsetX;
 	int slotOffsetY;
 	Sprite sprite;
+	Sprite buttonSprite;
+	Sprite buttonHoverOverlay;
 
-	SlotType(int slotOffsetX, int slotOffsetY, Sprite sprite) {
+	SlotType(int slotOffsetX, int slotOffsetY, Sprite sprite, Sprite buttonSprite, Sprite buttonHoverOverlay) {
 		this.slotOffsetX = slotOffsetX;
 		this.slotOffsetY = slotOffsetY;
 		this.sprite = sprite;
+		this.buttonSprite = buttonSprite;
+		this.buttonHoverOverlay = buttonHoverOverlay;
 	}
 
 	SlotType(int slotOffset, Sprite sprite) {
@@ -31,5 +35,13 @@ public enum SlotType {
 
 	public Sprite getSprite() {
 		return sprite;
+	}
+
+	public Sprite getButtonSprite() {
+		return buttonSprite;
+	}
+
+	public Sprite getButtonHoverOverlay() {
+		return buttonHoverOverlay;
 	}
 }

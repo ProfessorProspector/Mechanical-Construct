@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class Sprite implements ISprite {
+	public static final Sprite EMPTY = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 0, 0, 0);
 	public static final Sprite SLOT_NORMAL = new Sprite(GuiAssembler.MECH_ELEMENTS, 0, 0, 18, 18);
 	public static final Sprite CHARGE_SLOT_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 18, 0, 18, 18);
 	public static final Sprite DISCHARGE_SLOT_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 36, 0, 18, 18);
@@ -24,6 +25,19 @@ public class Sprite implements ISprite {
 	public static final Sprite ENERGY_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 46, 19, 9, 13);
 	public static final Sprite ENERGY_ICON_EMPTY = new Sprite(GuiAssembler.MECH_ELEMENTS, 62, 19, 9, 13);
 	public static final Sprite JEI_ICON = new Sprite(GuiAssembler.MECH_ELEMENTS, 42, 34, 16, 16);
+	public static final Sprite BUTTON_SLOT_NORMAL = new Sprite(GuiAssembler.MECH_ELEMENTS, 54, 0, 18, 18);
+	public static final Sprite FAKE_SLOT = new Sprite(GuiAssembler.MECH_ELEMENTS, 72, 0, 18, 18);
+	public static final Sprite BUTTON_HOVER_OVERLAY_SLOT_NORMAL = new Sprite(GuiAssembler.MECH_ELEMENTS, 90, 0, 18, 18);
+	public static final Sprite SLOT_CONFIG_POPUP = new Sprite(GuiAssembler.MECH_ELEMENTS, 29, 60, 62, 62);
+	public static final Sprite EXIT_BUTTON = new Sprite(GuiAssembler.MECH_ELEMENTS, 26, 122, 13, 13);
+	public static final Sprite EXIT_BUTTON_HOVER = new Sprite(GuiAssembler.MECH_ELEMENTS, 39, 122, 13, 13);
+	public static final Sprite EXIT_BUTTON_PRESSED = new Sprite(GuiAssembler.MECH_ELEMENTS, 52, 122, 13, 13);
+	public static final Sprite AUTO_INPUT_BUTTON = new Sprite(GuiAssembler.MECH_ELEMENTS, 74, 18, 16, 16);
+	public static final Sprite AUTO_INPUT_BUTTON_HOVER = new Sprite(GuiAssembler.MECH_ELEMENTS, 90, 18, 16, 16);
+	public static final Sprite AUTO_INPUT_BUTTON_PRESSED = new Sprite(GuiAssembler.MECH_ELEMENTS, 106, 18, 16, 16);
+	public static final Sprite AUTO_OUTPUT_BUTTON = new Sprite(GuiAssembler.MECH_ELEMENTS, 74, 34, 16, 16);
+	public static final Sprite AUTO_OUTPUT_BUTTON_HOVER = new Sprite(GuiAssembler.MECH_ELEMENTS, 90, 34, 16, 16);
+	public static final Sprite AUTO_OUTPUT_BUTTON_PRESSED = new Sprite(GuiAssembler.MECH_ELEMENTS, 106, 34, 16, 16);
 
 	public final ResourceLocation textureLocation;
 	public final int x;

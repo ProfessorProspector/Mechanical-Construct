@@ -3,10 +3,7 @@ package mechconstruct.blockentities;
 import mechconstruct.block.BlockMachine;
 import mechconstruct.gui.MechContainer;
 import mechconstruct.gui.blueprint.*;
-import mechconstruct.gui.blueprint.elements.ElementBase;
-import mechconstruct.gui.blueprint.elements.EnergyBarElement;
-import mechconstruct.gui.blueprint.elements.TextElement;
-import mechconstruct.gui.blueprint.elements.TopEnergyBarElement;
+import mechconstruct.gui.blueprint.elements.*;
 import mechconstruct.util.EnergyHandler;
 import mechconstruct.util.EnergyUtils;
 import mechconstruct.util.FluidHandler;
@@ -25,6 +22,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
@@ -226,13 +224,13 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	}
 
 	@Override
-	public void setCurrentTab(GuiTabBlueprint currentTab) {
-		this.currentTab = currentTab;
+	public void setCurrentTab(int tabId) {
+		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
 	}
 
 	@Override
-	public void setCurrentTab(int tabId) {
-		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
+	public void setCurrentTab(GuiTabBlueprint currentTab) {
+		this.currentTab = currentTab;
 	}
 
 	@Override
@@ -296,6 +294,21 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 			}
 			if (hasItemInventory || hasEnergyChargeInventories || hasFluidInventory) {
 				GuiTabBlueprint configureTab = new GuiTabBlueprint(this, "configure", Sprite.CONFIGURE_ICON);
+				configureTab.elements.addAll(mainTab.elements);
+				List<ElementBase> newElements = new ArrayList<>();
+				Iterator iterator = configureTab.elements.iterator();
+				while (iterator.hasNext()) {
+					ElementBase element = (ElementBase) iterator.next();
+					if (element instanceof DummySlotElement) {
+						newElements.add(new FakeSlot(element.x, element.y));
+						iterator.remove();
+					}
+					if (element instanceof SlotElement) {
+						newElements.add(new ConfigSlotElement(((SlotElement) element).getSlotInventory(), ((SlotElement) element).getSlotId(), ((SlotElement) element).getType(), element.getX(), element.getY()));
+						iterator.remove();
+					}
+				}
+				configureTab.elements.addAll(newElements);
 				blueprints.add(configureTab);
 			}
 			universalElements.add(new TopEnergyBarElement(3, -3));

@@ -11,6 +11,7 @@ import mechconstruct.networking.PacketGuiTabMachine;
 import mechconstruct.proxy.MechClient;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 
@@ -25,6 +26,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	public int yFactor;
 	public MechContainer container = (MechContainer) inventorySlots;
 	public ArrayList<ElementBase> elements = new ArrayList<>();
+	public RenderItem renderItem;
 
 	public MechGui(GuiTabBlueprint blueprint, EntityPlayer player) {
 		super(blueprint.provider.getContainer(blueprint, player));
@@ -37,6 +39,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	@Override
 	public void initGui() {
 		super.initGui();
+		renderItem = itemRender;
 		this.elements.clear();
 		elements.addAll(blueprint.elements);
 		for (GuiTabBlueprint tab : provider.getGuiTabBlueprints()) {
@@ -50,6 +53,15 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 			}
 			ElementBase button = new ElementBase(x, 5 + provider.getGuiTabBlueprints().indexOf(tab) * (26 + 1), width, 26, sprite);
 			int spriteSize = button.container.offsetSprites.size();
+			if (!tab.getSpriteContainer().offsetSprites.isEmpty()) {
+				if (button.container.offsetSprites.size() == spriteSize) {
+					button.container.offsetSprites.addAll(tab.getSpriteContainer().offsetSprites);
+				} else {
+					for (int i = spriteSize; i < tab.getSpriteContainer().offsetSprites.size(); i++) {
+						button.container.offsetSprites.set(i, tab.getSpriteContainer().offsetSprites.get(i - spriteSize));
+					}
+				}
+			}
 			button.addUpdateAction((gui, element) -> {
 				if (!tab.getSpriteContainer().offsetSprites.isEmpty()) {
 					if (element.container.offsetSprites.size() == spriteSize) {
@@ -95,6 +107,8 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		this.renderHoveredToolTip(mouseX, mouseY);
+		xFactor = guiLeft;
+		yFactor = guiTop;
 	}
 
 	@Override
@@ -109,7 +123,6 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		MechClient.GUI_ASSEMBLER.drawDefaultBackground(this, 0, 0, xSize, ySize);
-		drawTitle();
 		for (ElementBase element : elements) {
 			element.draw(this);
 			if (MechClient.GUI_ASSEMBLER.isInRect(this, element.x, element.y, element.getWidth(provider), element.getHeight(provider), mouseX, mouseY)) {
@@ -118,6 +131,14 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 			} else {
 				element.isHovering = false;
 			}
+			element.renderUpdate(this);
+		}
+		drawTitle();
+	}
+
+	@Override
+	public void updateScreen() {
+		for (ElementBase element : elements) {
 			element.update(this);
 		}
 	}
