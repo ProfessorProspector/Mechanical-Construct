@@ -50,6 +50,7 @@ public class ElementBase {
 	}
 
 	public ElementBase(int x, int y, int width, int height) {
+		this.container = new SpriteContainer();
 		this.x = x;
 		this.y = y;
 		this.width = width;

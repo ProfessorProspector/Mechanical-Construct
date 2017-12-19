@@ -2,7 +2,9 @@ package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.gui.MechGui;
 import mechconstruct.gui.SlotType;
+import mechconstruct.gui.blueprint.Sprite;
 import mechconstruct.proxy.MechClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
@@ -19,7 +21,35 @@ public class ConfigSlotElement extends ElementBase {
 		this.inventory = slotInventory;
 		this.id = slotId;
 		addPressAction(((element, gui, provider, mouseX, mouseY) -> {
+			gui.elements.add(new ElementBase(0 - gui.getOffsetFactorX(), 0 - gui.getOffsetFactorY(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight) {
+				@Override
+				public void draw(MechGui gui) {
+					super.draw(gui);
+					MechClient.GUI_ASSEMBLER.drawRect(gui, x, y, getWidth(gui.provider), getHeight(gui.provider), 0xA0000000);
+				}
+			});
 			gui.elements.add(new SlotConfigPopupElement(((ConfigSlotElement) element).id, x - 22, y - 22));
+			gui.elements.add(new ElementBase(x + 29, y - 25, Sprite.EXIT_BUTTON).addUpdateAction((g, e) -> {
+				if (e.isHovering) {
+					e.container.setSprite(0, Sprite.EXIT_BUTTON_HOVER);
+				} else {
+					e.container.setSprite(0, Sprite.EXIT_BUTTON);
+				}
+			}));
+			gui.elements.add(new ElementBase(x - 18, y - 18, Sprite.AUTO_INPUT_BUTTON).addUpdateAction((g, e) -> {
+				if (e.isHovering) {
+					e.container.setSprite(0, Sprite.AUTO_INPUT_BUTTON_HOVER);
+				} else {
+					e.container.setSprite(0, Sprite.AUTO_INPUT_BUTTON);
+				}
+			}));
+			gui.elements.add(new ElementBase(x - 18, y + 20, Sprite.AUTO_OUTPUT_BUTTON).addUpdateAction((g, e) -> {
+				if (e.isHovering) {
+					e.container.setSprite(0, Sprite.AUTO_OUTPUT_BUTTON_HOVER);
+				} else {
+					e.container.setSprite(0, Sprite.AUTO_OUTPUT_BUTTON);
+				}
+			}));
 		}));
 	}
 
@@ -40,9 +70,6 @@ public class ConfigSlotElement extends ElementBase {
 		GlStateManager.disableDepth();
 		GlStateManager.disableLighting();
 		GlStateManager.popMatrix();
-		if (isPressing) {
-			MechClient.GUI_ASSEMBLER.drawSprite(gui, type.getSprite(), x, y);
-		}
 		if (isHovering) {
 			MechClient.GUI_ASSEMBLER.drawSprite(gui, type.getButtonHoverOverlay(), x, y);
 		}

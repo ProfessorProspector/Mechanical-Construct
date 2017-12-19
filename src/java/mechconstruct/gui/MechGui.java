@@ -123,6 +123,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 		xFactor = guiLeft;
 		yFactor = guiTop;
 		MechClient.GUI_ASSEMBLER.drawDefaultBackground(this, 0, 0, xSize, ySize);
+		drawTitle();
 		for (ElementBase element : elements) {
 			element.draw(this);
 		}
@@ -142,7 +143,6 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 			}
 			element.renderUpdate(this);
 		}
-		drawTitle();
 	}
 
 	@Override
