@@ -29,15 +29,9 @@ public class Sprite implements ISprite {
 	public static final Sprite FAKE_SLOT = new Sprite(GuiAssembler.MECH_ELEMENTS, 72, 0, 18, 18);
 	public static final Sprite BUTTON_HOVER_OVERLAY_SLOT_NORMAL = new Sprite(GuiAssembler.MECH_ELEMENTS, 90, 0, 18, 18);
 	public static final Sprite SLOT_CONFIG_POPUP = new Sprite(GuiAssembler.MECH_ELEMENTS, 29, 60, 62, 62);
-	public static final Sprite EXIT_BUTTON = new Sprite(GuiAssembler.MECH_ELEMENTS, 26, 122, 13, 13);
-	public static final Sprite EXIT_BUTTON_HOVER = new Sprite(GuiAssembler.MECH_ELEMENTS, 39, 122, 13, 13);
-	public static final Sprite EXIT_BUTTON_PRESSED = new Sprite(GuiAssembler.MECH_ELEMENTS, 52, 122, 13, 13);
-	public static final Sprite AUTO_INPUT_BUTTON = new Sprite(GuiAssembler.MECH_ELEMENTS, 74, 18, 16, 16);
-	public static final Sprite AUTO_INPUT_BUTTON_HOVER = new Sprite(GuiAssembler.MECH_ELEMENTS, 90, 18, 16, 16);
-	public static final Sprite AUTO_INPUT_BUTTON_PRESSED = new Sprite(GuiAssembler.MECH_ELEMENTS, 106, 18, 16, 16);
-	public static final Sprite AUTO_OUTPUT_BUTTON = new Sprite(GuiAssembler.MECH_ELEMENTS, 74, 34, 16, 16);
-	public static final Sprite AUTO_OUTPUT_BUTTON_HOVER = new Sprite(GuiAssembler.MECH_ELEMENTS, 90, 34, 16, 16);
-	public static final Sprite AUTO_OUTPUT_BUTTON_PRESSED = new Sprite(GuiAssembler.MECH_ELEMENTS, 106, 34, 16, 16);
+	public static final Sprite.Button EXIT_BUTTON = new Sprite.Button(new Sprite(GuiAssembler.MECH_ELEMENTS, 26, 122, 13, 13), new Sprite(GuiAssembler.MECH_ELEMENTS, 39, 122, 13, 13));
+	public static final Sprite.CheckBox DARK_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssembler.MECH_ELEMENTS, 74, 18, 13, 13), new Sprite(GuiAssembler.MECH_ELEMENTS, 87, 18, 16, 13));
+	public static final Sprite.CheckBox LIGHT_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssembler.MECH_ELEMENTS, 74, 31, 13, 13), new Sprite(GuiAssembler.MECH_ELEMENTS, 87, 31, 16, 13));
 
 	public final ResourceLocation textureLocation;
 	public final int x;
@@ -87,5 +81,65 @@ public class Sprite implements ISprite {
 	@Override
 	public Sprite getSprite(IBlueprintProvider provider) {
 		return this;
+	}
+
+	public static class Button {
+		private Sprite normal;
+		private Sprite hovered;
+
+		public Button(Sprite normal, Sprite hovered) {
+			this.normal = normal;
+			this.hovered = hovered;
+		}
+
+		public Sprite getNormal() {
+			return normal;
+		}
+
+		public Sprite getHovered() {
+			return hovered;
+		}
+	}
+
+	public static class ToggleButton {
+		private Sprite normal;
+		private Sprite hovered;
+		private Sprite pressed;
+
+		public ToggleButton(Sprite normal, Sprite hovered, Sprite pressed) {
+			this.normal = normal;
+			this.hovered = hovered;
+			this.pressed = pressed;
+		}
+
+		public Sprite getNormal() {
+			return normal;
+		}
+
+		public Sprite getHovered() {
+			return hovered;
+		}
+
+		public Sprite getPressed() {
+			return pressed;
+		}
+	}
+
+	public static class CheckBox {
+		private Sprite normal;
+		private Sprite ticked;
+
+		public CheckBox(Sprite normal, Sprite ticked) {
+			this.normal = normal;
+			this.ticked = ticked;
+		}
+
+		public Sprite getNormal() {
+			return normal;
+		}
+
+		public Sprite getTicked() {
+			return ticked;
+		}
 	}
 }

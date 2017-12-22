@@ -38,40 +38,14 @@ public class ConfigSlotElement extends ElementBase {
 				}
 			}));
 			elements.add(new SlotConfigPopupElement(((ConfigSlotElement) element).id, x - 22, y - 22));
-			elements.add(new ElementBase(x + 29, y - 25, Sprite.EXIT_BUTTON).addUpdateAction((g, e) -> {
-				if (e.isHovering) {
-					e.container.setSprite(0, Sprite.EXIT_BUTTON_HOVER);
-				} else {
-					e.container.setSprite(0, Sprite.EXIT_BUTTON);
-				}
-			})
+			elements.add(new ButtonElement(x + 29, y - 25, Sprite.EXIT_BUTTON)
 				.addPressAction((element1, gui1, provider1, mouseX1, mouseY1) -> {
 					if (((ConfigSlotElement) element).toRemove != null) {
 						gui.elements.removeAll(((ConfigSlotElement) element).toRemove);
 					}
 				}));
-			elements.add(new ElementBase(x + 42, y + 1, Sprite.AUTO_INPUT_BUTTON).addUpdateAction((g, e) -> {
-				if (e.isHovering) {
-					e.container.setSprite(0, Sprite.AUTO_INPUT_BUTTON_HOVER);
-				} else {
-					e.container.setSprite(0, Sprite.AUTO_INPUT_BUTTON);
-				}
-			})
-				.addPressAction((element1, gui1, provider1, mouseX1, mouseY1) -> {
-					//INPUT BUTTON ACTION
-				}));
-			elements.add(new TextElement("Auto Input", 0xFFFFFFFF, x, y + 50));
-			elements.add(new TextElement("Auto Output", 0xFFFFFFFF, x, y + 60));
-			elements.add(new ElementBase(x + 42, y + 20, Sprite.AUTO_OUTPUT_BUTTON).addUpdateAction((g, e) -> {
-				if (e.isHovering) {
-					e.container.setSprite(0, Sprite.AUTO_OUTPUT_BUTTON_HOVER);
-				} else {
-					e.container.setSprite(0, Sprite.AUTO_OUTPUT_BUTTON);
-				}
-			})
-				.addPressAction((element1, gui1, provider1, mouseX1, mouseY1) -> {
-					//OUTPUT BUTTON ACTION
-				}));
+			elements.add(new CheckBoxElement("Auto Input", 0xFFFFFFFF, x - 26, y + 42, false, Sprite.LIGHT_CHECK_BOX));
+			elements.add(new CheckBoxElement("Auto Output", 0xFFFFFFFF, x - 26, y + 57, true, Sprite.LIGHT_CHECK_BOX));
 			gui.elements.addAll(elements);
 			((ConfigSlotElement) element).toRemove = elements;
 		}));
