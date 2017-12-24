@@ -1,21 +1,26 @@
 package mechconstruct.gui.blueprint;
 
 import mechconstruct.MechConstruct;
-import mechconstruct.gui.blueprint.elements.ElementBase;
+import mechconstruct.gui.blueprint.elements.Element;
 import net.minecraft.util.text.translation.I18n;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiTabBlueprint extends GuiBlueprint {
 	private final String unlocalizedName;
+	public List<String> tooltipText = new ArrayList<>();
 	private SpriteContainer spriteContainer = new SpriteContainer();
-	private ElementBase.Action additionalAction;
+	private Element.Action additionalAction;
 
 	public GuiTabBlueprint(IBlueprintProvider provider, String name, SpriteContainer spriteContainer) {
 		super(provider);
-		this.unlocalizedName = "tab." + MechConstruct.MOD_ID + "." + name;
+		this.unlocalizedName = "gui." + MechConstruct.MOD_ID + "." + name;
 		this.spriteContainer = spriteContainer;
+		tooltipText.add(getLocalizedName());
 	}
 
-	public GuiTabBlueprint(IBlueprintProvider provider, String name, ElementBase.Action additionalAction, SpriteContainer spriteContainer) {
+	public GuiTabBlueprint(IBlueprintProvider provider, String name, Element.Action additionalAction, SpriteContainer spriteContainer) {
 		this(provider, name, spriteContainer);
 		this.additionalAction = additionalAction;
 	}
@@ -24,7 +29,7 @@ public class GuiTabBlueprint extends GuiBlueprint {
 		this(provider, name, new SpriteContainer().addSprite(offsetSprite));
 	}
 
-	public GuiTabBlueprint(IBlueprintProvider provider, String name, ElementBase.Action additionalAction, OffsetSprite offsetSprite) {
+	public GuiTabBlueprint(IBlueprintProvider provider, String name, Element.Action additionalAction, OffsetSprite offsetSprite) {
 		this(provider, name, offsetSprite);
 		this.additionalAction = additionalAction;
 	}
@@ -33,7 +38,7 @@ public class GuiTabBlueprint extends GuiBlueprint {
 		this(provider, name, new OffsetSprite(sprite, 5, 5));
 	}
 
-	public GuiTabBlueprint(IBlueprintProvider provider, String name, ElementBase.Action additionalAction, ISprite sprite) {
+	public GuiTabBlueprint(IBlueprintProvider provider, String name, Element.Action additionalAction, ISprite sprite) {
 		this(provider, name, sprite);
 		this.additionalAction = additionalAction;
 	}
@@ -46,7 +51,7 @@ public class GuiTabBlueprint extends GuiBlueprint {
 		return unlocalizedName;
 	}
 
-	public ElementBase.Action getAdditionalAction() {
+	public Element.Action getAdditionalAction() {
 		return additionalAction;
 	}
 

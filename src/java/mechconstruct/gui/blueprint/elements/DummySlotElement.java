@@ -2,7 +2,7 @@ package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.gui.SlotType;
 
-public class DummySlotElement extends ElementBase {
+public class DummySlotElement extends Element {
 	SlotType type;
 
 	public DummySlotElement(SlotType type, int x, int y) {

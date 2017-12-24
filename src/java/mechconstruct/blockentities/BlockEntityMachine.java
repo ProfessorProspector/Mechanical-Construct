@@ -246,7 +246,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	@Override
 	public final List<GuiTabBlueprint> getGuiTabBlueprints() {
 		if (blueprints.isEmpty()) {
-			List<ElementBase> universalElements = new ArrayList<>();
+			List<Element> universalElements = new ArrayList<>();
 			List<Syncable> universalSyncables = new ArrayList<>();
 			GuiTabBlueprint mainTab = mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block)));
 			blueprints.add(mainTab);
@@ -294,11 +294,11 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 			}
 			if (hasItemInventory || hasEnergyChargeInventories || hasFluidInventory) {
 				GuiTabBlueprint configureTab = new GuiTabBlueprint(this, "configure", Sprite.CONFIGURE_ICON);
-				configureTab.elements.addAll(mainTab.elements);
-				List<ElementBase> newElements = new ArrayList<>();
-				Iterator iterator = configureTab.elements.iterator();
+				configureTab.addElements(mainTab.getElements());
+				List<Element> newElements = new ArrayList<>();
+				Iterator iterator = configureTab.getElements().iterator();
 				while (iterator.hasNext()) {
-					ElementBase element = (ElementBase) iterator.next();
+					Element element = (Element) iterator.next();
 					if (element instanceof DummySlotElement) {
 						newElements.add(new FakeSlot(element.x, element.y));
 						iterator.remove();
@@ -308,7 +308,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 						iterator.remove();
 					}
 				}
-				configureTab.elements.addAll(newElements);
+				configureTab.addElements(newElements);
 				blueprints.add(configureTab);
 			}
 			universalElements.add(new TopEnergyBarElement(3, -3));
@@ -325,7 +325,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 						blueprint.syncIntegerValue(syncable.getIntSupplier(), syncable.getIntConsumer());
 					}
 				}
-				for (ElementBase element : universalElements) {
+				for (Element element : universalElements) {
 					blueprint.addElement(element);
 				}
 			}
@@ -333,7 +333,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		return blueprints;
 	}
 
-	public List<ElementBase> getUniversalElements() {
+	public List<Element> getUniversalElements() {
 		return new ArrayList<>();
 	}
 

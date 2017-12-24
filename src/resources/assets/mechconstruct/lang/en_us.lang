@@ -5,9 +5,16 @@ item.mechconstruct.wrench.name=Pipe Wrench
 provider.mechconstruct.basic.furnace.name=Basic Furnace
 provider.mechconstruct.basic.grinder.name=Basic Grinder
 
-tab.mechconstruct.main=Main
-tab.mechconstruct.energy=Energy
-tab.mechconstruct.redstone=Redstone Control
-tab.mechconstruct.upgrades=Upgrades
-tab.mechconstruct.configure=Configure
-tab.mechconstruct.jei=JEI
+gui.mechconstruct.main=Main
+gui.mechconstruct.energy=Energy
+gui.mechconstruct.upgrades=Upgrades
+gui.mechconstruct.configure=Configure
+
+gui.mechconstruct.redstone=Redstone Control
+gui.mechconstruct.jei=JEI
+
+gui.mechconstruct.energy_unit=FE
+gui.mechconstruct.charged=Charged
+gui.mechconstruct.edit_slot_config=Edit Slot Configuration
+gui.mechconstruct.auto_input=Auto Input
+gui.mechconstruct.auto_output=Auto Output

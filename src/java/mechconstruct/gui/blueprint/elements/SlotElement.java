@@ -3,7 +3,7 @@ package mechconstruct.gui.blueprint.elements;
 import mechconstruct.gui.SlotType;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class SlotElement extends ElementBase {
+public class SlotElement extends Element {
 	protected ItemStackHandler slotInventory;
 	protected SlotType type;
 	int slotId, slotX, slotY;

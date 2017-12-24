@@ -1,5 +1,6 @@
 package mechconstruct.gui.blueprint.elements;
 
+import mechconstruct.MechConstruct;
 import mechconstruct.block.BlockMachine;
 import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.MechGui;
@@ -14,18 +15,42 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class SlotConfigPopupElement extends ElementBase {
+public class SlotConfigPopupElement extends Element {
 	int id;
 
 	public SlotConfigPopupElement(int slotId, int x, int y) {
-		super(x, y, Sprite.SLOT_CONFIG_POPUP);
+		super(x, y);
 		this.id = slotId;
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
+	public void clientCalls() {
+		super.clientCalls();
+		int width = 90;
+		int height = 101;
+		setWidth(width);
+		setHeight(height);
+		setX(x + 31 - (width / 2));
+		setY(y + 47 - (height / 2));
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
 	public void draw(MechGui gui) {
 		super.draw(gui);
+		MechConstruct.proxy.getGuiAssembler().drawDefaultBackground(gui, x, y, getWidth(gui.provider), getHeight(gui.provider));
+		int configX = x - 31 + (getWidth(gui.provider) / 2);
+		int configY = y + 4;
+		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, Sprite.MODEL_SLOT, configX + 3, configY + 22);
+		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, Sprite.MODEL_SLOT, configX + 22, configY + 3);
+		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, Sprite.MODEL_SLOT, configX + 22, configY + 22);
+		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, Sprite.MODEL_SLOT, configX + 22, configY + 41);
+		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, Sprite.MODEL_SLOT, configX + 41, configY + 22);
+		MechConstruct.proxy.getGuiAssembler().drawSprite(gui, Sprite.MODEL_SLOT, configX + 41, configY + 41);
 		BlockEntityMachine machine = ((BlockEntityMachine) gui.provider);
 		IBlockAccess blockAccess = machine.getWorld();
 		BlockPos pos = machine.getPos();
@@ -34,14 +59,15 @@ public class SlotConfigPopupElement extends ElementBase {
 		BlockRendererDispatcher dispatcher = FMLClientHandler.instance().getClient().getBlockRendererDispatcher();
 		IBakedModel model = dispatcher.getBlockModelShapes().getModelForState(state.withProperty(BlockMachine.FACING, EnumFacing.NORTH));
 		FMLClientHandler.instance().getClient().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		drawState(gui, blockAccess, model, actualState, pos, dispatcher, 4, 23);
-		drawState(gui, blockAccess, model, actualState, pos, dispatcher, 23, -12, -90F, 1F, 0F, 0F);
-		drawState(gui, blockAccess, model, actualState, pos, dispatcher, 23, 23, -90F, 0F, 1F, 0F);
-		drawState(gui, blockAccess, model, actualState, pos, dispatcher, 23, 42, 90F, 1F, 0F, 0F);
-		drawState(gui, blockAccess, model, actualState, pos, dispatcher, 26, 23, 180F, 0F, 1F, 0F);
-		drawState(gui, blockAccess, model, actualState, pos, dispatcher, 26, 42, 90F, 0F, 1F, 0F);
+		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 4, configY + 23);
+		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 23, configY - 12, -90F, 1F, 0F, 0F);
+		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 23, configY + 23, -90F, 0F, 1F, 0F);
+		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 23, configY + 42, 90F, 1F, 0F, 0F);
+		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 26, configY + 23, 180F, 0F, 1F, 0F);
+		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 26, configY + 42, 90F, 0F, 1F, 0F);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void drawState(MechGui gui,
 	                      IBlockAccess blockAccess,
 	                      IBakedModel model,
@@ -57,7 +83,7 @@ public class SlotConfigPopupElement extends ElementBase {
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableDepth();
-		GlStateManager.translate(8 + gui.xFactor + this.x + x, 8 + gui.yFactor + this.y + y, 512);
+		GlStateManager.translate(8 + gui.xFactor + x, 8 + gui.yFactor + y, 512);
 		GlStateManager.scale(16F, 16F, 16F);
 		GlStateManager.translate(0.5F, 0.5F, 0.5F);
 		GlStateManager.scale(-1, -1, -1);
@@ -67,21 +93,9 @@ public class SlotConfigPopupElement extends ElementBase {
 		dispatcher.getBlockModelRenderer().renderModelBrightness(model, actualState, 1F, false);
 		GlStateManager.disableDepth();
 		GlStateManager.popMatrix();
-
-/*		GlStateManager.pushMatrix();
-		GlStateManager.enableDepth();
-		//		GlStateManager.translate(8 + gui.xFactor + this.x + x, 8 + gui.yFactor + this.y + y, 1000);
-		GlStateManager.translate(gui.xFactor + this.x + x, gui.yFactor + this.y + y, 512);
-		if (rotAngle != 0) {
-			GlStateManager.rotate(rotAngle, rotX, rotY, rotZ);
-		}
-		GlStateManager.scale(16F, 16F, 16F);
-		GlStateManager.translate(-0.5F, -0.5F, -0.5F);
-		GlStateManager.scale(-1, -1, -1);
-		GlStateManager.disableDepth();
-		GlStateManager.popMatrix();*/
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void drawState(MechGui gui, IBlockAccess blockAccess, IBakedModel model, IBlockState actualState, BlockPos pos, BlockRendererDispatcher dispatcher, int x, int y) {
 		drawState(gui, blockAccess, model, actualState, pos, dispatcher, x, y, 0, 0, 0, 0);
 	}

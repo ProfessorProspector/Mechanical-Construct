@@ -1,6 +1,5 @@
 package mechconstruct.gui;
 
-import mechconstruct.MechConstruct;
 import mechconstruct.gui.blueprint.ISprite;
 import mechconstruct.gui.blueprint.Sprite;
 import net.minecraft.client.Minecraft;
@@ -8,23 +7,17 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import scala.actors.threadpool.Arrays;
+
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class GuiAssembler {
-	public static final ResourceLocation BACKGROUND_SHEET = new ResourceLocation(MechConstruct.MOD_ID, "textures/gui/assembler_background.png");
-	public static final ResourceLocation MECH_ELEMENTS = new ResourceLocation(MechConstruct.MOD_ID, "textures/gui/assembler_elements.png");
-	public final ResourceLocation customElementSheet;
+public class GuiAssembler extends GuiAssemblerServer {
 
-	public GuiAssembler(ResourceLocation elementSheet) {
-		this.customElementSheet = elementSheet;
-	}
-
-	public GuiAssembler() {
-		this.customElementSheet = null;
-	}
-
+	@Override
 	public void drawDefaultBackground(MechGui gui, int x, int y, int width, int height) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
@@ -36,6 +29,7 @@ public class GuiAssembler {
 		gui.drawTexturedModalRect(x + width / 2, y + height / 2, 256 - width / 2, 256 - height / 2, width / 2, height / 2);
 	}
 
+	@Override
 	public void drawRect(MechGui gui, int x, int y, int width, int height, int colour) {
 		drawGradientRect(gui, x, y, width, height, colour, colour);
 	}
@@ -43,6 +37,7 @@ public class GuiAssembler {
 	/*
 		Taken from Gui
 	*/
+	@Override
 	public void drawGradientRect(MechGui gui, int x, int y, int width, int height, int startColor, int endColor) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
@@ -78,20 +73,45 @@ public class GuiAssembler {
 		GlStateManager.enableTexture2D();
 	}
 
+	@Override
 	public int adjustX(MechGui gui, int x) {
 		return gui.getOffsetFactorX() + x;
 	}
 
+	@Override
 	public int adjustY(MechGui gui, int y) {
 		return gui.getOffsetFactorY() + y;
 	}
 
+	@Override
 	public boolean isInRect(MechGui gui, int x, int y, int xSize, int ySize, int mouseX, int mouseY) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
 		return ((mouseX >= x && mouseX <= x + xSize) && (mouseY >= y && mouseY <= y + ySize));
 	}
 
+	@Override
+	public void drawSimpleTooltip(MechGui gui, int mouseX, int mouseY, List<String> lines) {
+		GuiUtils.drawHoveringText(lines, mouseX, mouseY, gui.width, gui.height, -1, gui.mc.fontRenderer);
+		GlStateManager.disableLighting();
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	@Override
+	public void drawPercentTooltip(MechGui gui, int mouseX, int mouseY, int current, int max, String unitLabel, String percentageLabel) {
+		int percentage = getPercentage(max, current);
+		drawSimpleTooltip(gui, mouseX, mouseY,
+			TextFormatting.GOLD + "" + current + "/" + max + (unitLabel.isEmpty() ? "" : " " + unitLabel),
+			getPercentageColour(percentage) + "" + percentage + "%" + TextFormatting.GRAY + (percentageLabel.isEmpty() ? "" : " " + percentageLabel));
+	}
+
+	@Override
+
+	public void drawSimpleTooltip(MechGui gui, int mouseX, int mouseY, String... lines) {
+		drawSimpleTooltip(gui, mouseX, mouseY, Arrays.asList(lines));
+	}
+
+	@Override
 	public void drawPlayerSlots(MechGui gui, int posX, int posY, boolean center) {
 		if (center)
 			posX -= 81;
@@ -104,6 +124,7 @@ public class GuiAssembler {
 		}
 	}
 
+	@Override
 	public void drawSlot(MechGui gui, int posX, int posY) {
 		posX = adjustX(gui, posX);
 		posY = adjustY(gui, posY);
@@ -112,32 +133,39 @@ public class GuiAssembler {
 		gui.drawTexturedModalRect(posX, posY, 0, 0, 18, 18);
 	}
 
+	@Override
 	public void drawString(MechGui gui, String string, int x, int y, int color) {
 		x = adjustX(gui, x);
 		y = adjustY(gui, y);
 		gui.mc.fontRenderer.drawString(string, x, y, color);
 	}
 
+	@Override
 	public void drawString(MechGui gui, String string, int x, int y) {
 		drawString(gui, string, x, y, 16777215);
 	}
 
+	@Override
 	public void setTextureSheet(ResourceLocation textureLocation) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
 	}
 
+	@Override
 	public void drawCenteredString(MechGui gui, String string, int y, int colour) {
 		drawString(gui, string, (gui.getXSize() / 2 - gui.mc.fontRenderer.getStringWidth(string) / 2), y, colour);
 	}
 
+	@Override
 	public void drawCenteredString(MechGui gui, String string, int x, int y, int colour) {
 		drawString(gui, string, (x - gui.mc.fontRenderer.getStringWidth(string) / 2), y, colour);
 	}
 
+	@Override
 	public int getStringWidth(String string) {
 		return Minecraft.getMinecraft().fontRenderer.getStringWidth(string);
 	}
 
+	@Override
 	public void drawSprite(MechGui gui, ISprite iSprite, int x, int y) {
 		Sprite sprite = iSprite.getSprite(gui.provider);
 		if (sprite != null) {
@@ -159,25 +187,5 @@ public class GuiAssembler {
 				GlStateManager.popMatrix();
 			}
 		}
-	}
-
-	public int getScaledBurnTime(int scale, int burnTime, int totalBurnTime) {
-		return (int) (((float) burnTime / (float) totalBurnTime) * scale);
-	}
-
-	public TextFormatting getPercentageColour(int percentage) {
-		if (percentage <= 10) {
-			return TextFormatting.RED;
-		} else if (percentage >= 75) {
-			return TextFormatting.GREEN;
-		} else {
-			return TextFormatting.YELLOW;
-		}
-	}
-
-	public int getPercentage(int MaxValue, int CurrentValue) {
-		if (CurrentValue == 0)
-			return 0;
-		return (int) ((CurrentValue * 100.0f) / MaxValue);
 	}
 }

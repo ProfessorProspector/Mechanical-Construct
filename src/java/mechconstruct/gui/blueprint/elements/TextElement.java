@@ -1,11 +1,11 @@
 package mechconstruct.gui.blueprint.elements;
 
+import mechconstruct.MechConstruct;
 import mechconstruct.gui.MechGui;
-import mechconstruct.proxy.MechClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TextElement extends ElementBase {
+public class TextElement extends Element {
 	protected String text;
 	protected int color;
 	protected boolean centered = false;
@@ -52,12 +52,12 @@ public class TextElement extends ElementBase {
 		}
 		if (centered) {
 			if (x > -1) {
-				MechClient.GUI_ASSEMBLER.drawCenteredString(gui, string, x, y, color);
+				MechConstruct.proxy.getGuiAssembler().drawCenteredString(gui, string, x, y, color);
 			} else {
-				MechClient.GUI_ASSEMBLER.drawCenteredString(gui, string, y, color);
+				MechConstruct.proxy.getGuiAssembler().drawCenteredString(gui, string, y, color);
 			}
 		} else if (x > -1) {
-			MechClient.GUI_ASSEMBLER.drawString(gui, string, x, y, color);
+			MechConstruct.proxy.getGuiAssembler().drawString(gui, string, x, y, color);
 		}
 
 	}

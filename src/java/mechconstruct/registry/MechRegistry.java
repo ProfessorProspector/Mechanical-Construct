@@ -3,11 +3,13 @@ package mechconstruct.registry;
 import mechconstruct.MechConstruct;
 import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.registry.recipes.basic.BasicFurnaceRecipes;
+import mechconstruct.util.shootingstar.ShootingStar;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -15,6 +17,8 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +28,11 @@ public class MechRegistry {
 	private static ArrayList<Item> items = new ArrayList<>();
 	private static ArrayList<Block> blocks = new ArrayList<>();
 	private static ArrayList<Class<? extends BlockEntityMachine>> blockEntities = new ArrayList<>();
+
+	@SubscribeEvent
+	public static void registerModels(ModelRegistryEvent event) {
+		ShootingStar.registerModels(MechConstruct.MOD_ID);
+	}
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -50,6 +59,7 @@ public class MechRegistry {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public static void tooltipRender(RenderTooltipEvent.Pre event) {
 		event.setCanceled(true);
 		List<String> textLines = new ArrayList<>();

@@ -1,13 +1,15 @@
 package mechconstruct.gui.blueprint;
 
 import com.mojang.realmsclient.util.Pair;
+import mechconstruct.MechConstruct;
 import mechconstruct.gui.SlotType;
 import mechconstruct.gui.blueprint.elements.DummySlotElement;
-import mechconstruct.gui.blueprint.elements.ElementBase;
+import mechconstruct.gui.blueprint.elements.Element;
 import mechconstruct.gui.blueprint.elements.SlotElement;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
@@ -16,12 +18,12 @@ public class GuiBlueprint {
 	public final List<Pair<IntSupplier, IntConsumer>> shortSyncables = new ArrayList<>();
 	public final List<Pair<IntSupplier, IntConsumer>> intSyncables = new ArrayList<>();
 	public IBlueprintProvider provider;
-	public List<ElementBase> elements = new ArrayList<>();
 	public List<SlotElement> slots = new ArrayList<>();
 	public int xSize = 0;
 	public int ySize = 0;
 	public int playerInvX = -1;
 	public int playerInvY = -1;
+	private List<Element> elements = new ArrayList<>();
 
 	public GuiBlueprint(IBlueprintProvider provider) {
 		this.provider = provider;
@@ -60,9 +62,28 @@ public class GuiBlueprint {
 		return this;
 	}
 
-	public GuiBlueprint addElement(ElementBase element) {
+	public GuiBlueprint addElement(Element element) {
+		MechConstruct.proxy.clientCalls(element);
 		this.elements.add(element);
 		return this;
+	}
+
+	public void addElements(Collection<? extends Element> elements) {
+		for (Element element : elements) {
+			MechConstruct.proxy.clientCalls(element);
+		}
+		this.elements.addAll(elements);
+	}
+
+	public List<Element> getElements() {
+		return elements;
+	}
+
+	public void setElements(List<Element> elements) {
+		for (Element element : elements) {
+			MechConstruct.proxy.clientCalls(element);
+		}
+		this.elements = elements;
 	}
 
 	public GuiBlueprint addSlot(SlotElement slot) {
@@ -98,14 +119,14 @@ public class GuiBlueprint {
 		return this;
 	}
 
-	public GuiTabBlueprint makeTabBlueprint(String name, Sprite sprite, ElementBase.Action additionalAction) {
+	public GuiTabBlueprint makeTabBlueprint(String name, Sprite sprite, Element.Action additionalAction) {
 		GuiTabBlueprint tabBlueprint;
 		if (additionalAction == null) {
 			tabBlueprint = new GuiTabBlueprint(provider, name, sprite);
 		} else {
 			tabBlueprint = new GuiTabBlueprint(provider, name, additionalAction, sprite);
 		}
-		tabBlueprint.elements = elements;
+		tabBlueprint.setElements(elements);
 		tabBlueprint.slots = slots;
 		tabBlueprint.xSize = xSize;
 		tabBlueprint.ySize = ySize;
