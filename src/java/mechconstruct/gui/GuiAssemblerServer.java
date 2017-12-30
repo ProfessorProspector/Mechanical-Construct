@@ -2,8 +2,11 @@ package mechconstruct.gui;
 
 import mechconstruct.MechConstruct;
 import mechconstruct.gui.blueprint.ISprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 
@@ -99,5 +102,9 @@ public class GuiAssemblerServer {
 	}
 
 	public void drawSprite(MechGui gui, ISprite iSprite, int x, int y) {
+	}
+
+	public void drawFluid(MechGui gui, FluidStack fluid, int x, int y, int width, int height, int maxCapacity) {
+
 	}
 }

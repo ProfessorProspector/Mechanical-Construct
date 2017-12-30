@@ -4,9 +4,12 @@ import mechconstruct.gui.blueprint.ISprite;
 import mechconstruct.gui.blueprint.Sprite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -186,6 +189,30 @@ public class GuiAssembler extends GuiAssemblerServer {
 				GlStateManager.disableLighting();
 				GlStateManager.popMatrix();
 			}
+		}
+	}
+
+	@Override
+	public void drawFluid(MechGui gui, FluidStack fluid, int x, int y, int width, int height, int maxCapacity) {
+		x = adjustX(gui, x);
+		y = adjustY(gui, y);
+		setTextureSheet(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		y += height;
+		final ResourceLocation still = fluid.getFluid().getStill(fluid);
+		final TextureAtlasSprite sprite = gui.mc.getTextureMapBlocks().getAtlasSprite(still.toString());
+
+		final int drawHeight = (int) (fluid.amount / (maxCapacity * 1F) * height);
+		final int iconHeight = sprite.getIconHeight();
+		int offsetHeight = drawHeight;
+
+		int iteration = 0;
+		while (offsetHeight != 0) {
+			final int curHeight = offsetHeight < iconHeight ? offsetHeight : iconHeight;
+			gui.drawTexturedModalRect(x, y - offsetHeight, sprite, width, curHeight);
+			offsetHeight -= curHeight;
+			iteration++;
+			if (iteration > 100)
+				break;
 		}
 	}
 }

@@ -4,8 +4,9 @@ import mechconstruct.MechConstruct;
 import mechconstruct.gui.GuiAssemblerServer;
 import mechconstruct.gui.MechGuiHandler;
 import mechconstruct.gui.blueprint.elements.Element;
-import mechconstruct.networking.MechPacketHandler;
+import mechconstruct.network.MechPacketHandler;
 import mechconstruct.registry.MechRegistry;
+import mechconstruct.registry.recipes.basic.BasicFurnaceRecipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -28,6 +29,7 @@ public class MechCommon {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
+		BasicFurnaceRecipes.postInit();
 	}
 
 	public GuiAssemblerServer getGuiAssembler() {

@@ -35,9 +35,6 @@ public class BasicFurnace extends BlockEntityMachine {
 				itemInventory.extractItem(0, 1, false);
 				itemInventory.insertItem(1, ((ItemStack) currentRecipe.getOutputs().get(0)).copy(), false);
 			}
-			if (energyInventory.getEnergy() < energyInventory.getCapacity()) {
-				energyInventory.receiveEnergy(5, false);
-			}
 		}
 	}
 }

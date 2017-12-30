@@ -4,22 +4,27 @@ import mechconstruct.block.BlockMachine;
 import mechconstruct.gui.MechContainer;
 import mechconstruct.gui.blueprint.*;
 import mechconstruct.gui.blueprint.elements.*;
-import mechconstruct.util.EnergyHandler;
-import mechconstruct.util.EnergyUtils;
-import mechconstruct.util.FluidHandler;
-import mechconstruct.util.MachineSide;
+import mechconstruct.network.MechPacketHandler;
+import mechconstruct.network.PacketTankSync;
+import mechconstruct.util.*;
 import mechconstruct.util.slotconfig.DividedIOItemHandler;
 import mechconstruct.util.slotconfig.SidedConfigData;
 import mechconstruct.util.slotconfig.SlotCompound;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -29,11 +34,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.IntConsumer;
-import java.util.function.IntSupplier;
 
 public abstract class BlockEntityMachine extends TileEntity implements ITickable, IBlueprintProvider {
-	protected SidedConfigData sideConfigData;
+
+	protected BlockMachine block;
+
+	/* Inventories */
 	protected ItemStackHandler itemInventory;
 	protected ItemStackHandler upgradeInventory;
 	protected EnergyHandler energyInventory;
@@ -42,15 +48,18 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	protected boolean hasUpgradeInventory = false;
 	protected boolean hasEnergyInventory = false;
 	protected boolean hasFluidInventory = false;
-	protected int costMultiplier = 0;
-	protected BlockMachine block;
+
+	/* Slot Config */
+	protected SidedConfigData sideConfigData;
+	protected HashMap<EnumFacing, DividedIOItemHandler> sideHandlers;
+
+	/* IBlueprintProvider */
 	protected GuiBlueprint mainBlueprint;
 	protected GuiTabBlueprint currentTab;
 	protected List<GuiTabBlueprint> blueprints = new ArrayList<>();
 	protected List<GuiTabBlueprint> additionalBlueprints = new ArrayList<>();
-	protected HashMap<EnumFacing, DividedIOItemHandler> sideHandlers;
 
-	public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
+	public BlockEntityMachine(int inventorySize, int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, Tank... tanks) {
 		if (inventorySize > 0) {
 			this.itemInventory = new ItemStackHandler(inventorySize) {
 				@Override
@@ -82,24 +91,24 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		}
 	}
 
-	public BlockEntityMachine(int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, FluidHandler.Tank... tanks) {
+	public BlockEntityMachine(int energyCapacity, EnergyUtils.Bandwidth bandwidth, int upgradeSlots, Tank... tanks) {
 		this(0, energyCapacity, bandwidth, upgradeSlots, tanks);
 	}
 
-	public BlockEntityMachine(int inventorySize, FluidHandler.Tank... tanks) {
+	public BlockEntityMachine(int inventorySize, Tank... tanks) {
 		this(inventorySize, 0, EnergyUtils.Bandwidth.NONE, 0, tanks);
 	}
 
-	public BlockEntityMachine(FluidHandler.Tank... tanks) {
+	public BlockEntityMachine(Tank... tanks) {
 		this(0, tanks);
 	}
 
+	public abstract void machineTick();
+
 	@Override
-	public void update() {
+	public final void update() {
 		machineTick();
 	}
-
-	public abstract void machineTick();
 
 	public BlockMachine getBlock() {
 		return block;
@@ -109,76 +118,20 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		this.block = block;
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		if (hasItemInventory) {
-			itemInventory.deserializeNBT(compound.getCompoundTag("item_inventory"));
-			sideConfigData = new SidedConfigData(compound.getCompoundTag("side_config_data"));
-		}
-		if (hasUpgradeInventory) {
-			upgradeInventory.deserializeNBT(compound.getCompoundTag("upgrade_inventory"));
-		}
-		if (hasEnergyInventory) {
-			energyInventory.deserializeNBT(compound.getCompoundTag("energy_inventory"));
-		}
-		if (hasFluidInventory) {
-			fluidInventory.deserializeNBT(compound.getCompoundTag("fluid_inventory"));
-		}
-		super.readFromNBT(compound);
+	public EnumFacing getFacing() {
+		return world.getBlockState(pos).getValue(BlockMachine.FACING);
 	}
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		if (hasItemInventory) {
-			compound.setTag("item_inventory", itemInventory.serializeNBT());
-			compound.setTag("side_config_data", getSideConfigData().serializeNBT());
-		}
-		if (hasUpgradeInventory) {
-			compound.setTag("upgrade_inventory", upgradeInventory.serializeNBT());
-		}
-		if (hasEnergyInventory) {
-			compound.setTag("energy_inventory", energyInventory.serializeNBT());
-		}
-		if (hasFluidInventory) {
-			compound.setTag("fluid_inventory", fluidInventory.serializeNBT());
-		}
-		return super.writeToNBT(compound);
+	public void setFluid(String tank, FluidStack fluidStack) {
+		fluidInventory.getTank(tank).setFluid(fluidStack);
+		MechPacketHandler.networkWrapper.sendToAllAround(new PacketTankSync(getPos(), fluidInventory.serializeNBT()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
 	}
 
-	@Nullable
-	@Override
-	public <T> T getCapability(
-		@Nonnull
-			Capability<T> capability,
-		@Nullable
-			EnumFacing side) {
-		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null) {
-			DividedIOItemHandler sideyboi = getHandlerForSide(side);
-			return (T) sideyboi;
-		}
-		if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
-			return (T) energyInventory;
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidInventory != null)
-			return (T) fluidInventory;
-		return super.getCapability(capability, side);
+	public void setFluid(String tank, Fluid fluid, int amount) {
+		setFluid(tank, new FluidStack(fluid, amount));
 	}
 
-	@Override
-	public boolean hasCapability(
-		@Nonnull
-			Capability<?> capability,
-		@Nullable
-			EnumFacing side) {
-		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null) {
-			return !getHandlerForSide(side).slots.isEmpty();
-		}
-		if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
-			return true;
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidInventory != null) {
-			return true;
-		}
-		return super.hasCapability(capability, side);
-	}
+	/* Slot Config */
 
 	public DividedIOItemHandler getHandlerForSide(EnumFacing facing) {
 		if (sideHandlers == null) {
@@ -188,9 +141,8 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 			if (sideHandlers.get(enumFacing) == null || !sideHandlers.get(enumFacing).slots.equals(getSideConfigData().getSlotsForSide(MachineSide.getMachineSide(this, facing)))) {
 				sideHandlers.put(facing, new DividedIOItemHandler(getItemInventory(), getSideConfigData().getSlotsForSide(MachineSide.getMachineSide(this, facing))));
 			}
-			return sideHandlers.get(facing);
 		}
-		return new DividedIOItemHandler(itemInventory, new ArrayList<>());
+		return sideHandlers.get(facing);
 	}
 
 	public void updateSideSlot(EnumFacing facing, SlotCompound slot) {
@@ -199,36 +151,6 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 
 	public void updateSideSlot(MachineSide side, SlotCompound slot) {
 		getSideConfigData().updateSideSlot(side, slot);
-	}
-
-	@Override
-	public boolean canInteractWith(EntityPlayer playerIn) {
-		return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
-	}
-
-	public int getCostMultiplier() {
-		return costMultiplier;
-	}
-
-	@Override
-	public ItemStackHandler getItemInventory() {
-		return itemInventory;
-	}
-
-	public boolean hasItemInventory() {
-		return hasItemInventory;
-	}
-
-	public boolean hasUpgradeInventory() {
-		return hasUpgradeInventory;
-	}
-
-	public boolean hasEnergyInventory() {
-		return hasEnergyInventory;
-	}
-
-	public boolean hasFluidInventory() {
-		return hasFluidInventory;
 	}
 
 	public SidedConfigData getSideConfigData() {
@@ -246,57 +168,8 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		return getSideConfigData().getSlotsForSide(MachineSide.getMachineSide(this, side));
 	}
 
-	@Override
-	public ItemStackHandler getUpgradeInventory() {
-		return upgradeInventory;
-	}
 
-	@Override
-	public EnergyHandler getEnergyInventory() {
-		return energyInventory;
-	}
-
-	@Override
-	public FluidHandler getFluidInventory() {
-		return fluidInventory;
-	}
-
-	@Override
-	public ProviderType getProviderType() {
-		return ProviderType.MACHINE;
-	}
-
-	@Override
-	public GuiTabBlueprint getCurrentTab() {
-		if (currentTab == null) {
-			currentTab = getGuiTabBlueprints().get(0);
-		}
-		return currentTab;
-	}
-
-	@Override
-	public void setCurrentTab(GuiTabBlueprint currentTab) {
-		this.currentTab = currentTab;
-	}
-
-	@Override
-	public void setCurrentTab(int tabId) {
-		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
-	}
-
-	public EnumFacing getFacing() {
-		return world.getBlockState(pos).getValue(BlockMachine.FACING);
-	}
-
-	@Override
-	public MechContainer getContainer(GuiTabBlueprint blueprint, EntityPlayer player) {
-		return new MechContainer(this, blueprint, player);
-	}
-
-	@Override
-	public String getNameToDisplay() {
-		return block.getLocalizedName();
-	}
+	/* IBlueprintProvider */
 
 	@Override
 	public final List<GuiTabBlueprint> getGuiTabBlueprints() {
@@ -374,7 +247,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 			universalSyncables.addAll(getUniversalSyncables());
 			for (GuiTabBlueprint blueprint : blueprints) {
 				for (Syncable syncable : universalSyncables) {
-					if (syncable.isShort) {
+					if (syncable.isShort()) {
 						blueprint.syncShortValue(syncable.getIntSupplier(), syncable.getIntConsumer());
 					} else {
 						blueprint.syncIntegerValue(syncable.getIntSupplier(), syncable.getIntConsumer());
@@ -388,6 +261,85 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		return blueprints;
 	}
 
+	@Override
+	public String getNameToDisplay() {
+		return block.getLocalizedName();
+	}
+
+	@Override
+	public boolean hasItemInventory() {
+		return hasItemInventory;
+	}
+
+	@Override
+	public boolean hasUpgradeInventory() {
+		return hasUpgradeInventory;
+	}
+
+	@Override
+	public boolean hasEnergyInventory() {
+		return hasEnergyInventory;
+	}
+
+	@Override
+	public boolean hasFluidInventory() {
+		return hasFluidInventory;
+	}
+
+	@Override
+	public ItemStackHandler getItemInventory() {
+		return itemInventory;
+	}
+
+	@Override
+	public ItemStackHandler getUpgradeInventory() {
+		return upgradeInventory;
+	}
+
+	@Override
+	public EnergyHandler getEnergyInventory() {
+		return energyInventory;
+	}
+
+	@Override
+	public FluidHandler getFluidInventory() {
+		return fluidInventory;
+	}
+
+	@Override
+	public ProviderType getProviderType() {
+		return ProviderType.MACHINE;
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer playerIn) {
+		return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+	}
+
+	@Override
+	public GuiTabBlueprint getCurrentTab() {
+		if (currentTab == null) {
+			currentTab = getGuiTabBlueprints().get(0);
+		}
+		return currentTab;
+	}
+
+	@Override
+	public void setCurrentTab(int tabId) {
+		this.setCurrentTab(getGuiTabBlueprints().get(tabId));
+	}
+
+	@Override
+	public void setCurrentTab(GuiTabBlueprint currentTab) {
+		this.currentTab = currentTab;
+	}
+
+	@Override
+	public MechContainer getContainer(GuiTabBlueprint blueprint, EntityPlayer player) {
+		MechPacketHandler.networkWrapper.sendToAllAround(new PacketTankSync(getPos(), fluidInventory.serializeNBT()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
+		return new MechContainer(this, blueprint, player);
+	}
+
 	public List<Element> getUniversalElements() {
 		return new ArrayList<>();
 	}
@@ -396,36 +348,104 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		return new ArrayList<>();
 	}
 
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return true;
+	/* Syncing */
+
+	@Nullable
+	@Override
+	public SPacketUpdateTileEntity getUpdatePacket() {
+		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
 	}
 
-	public class Syncable {
-		private IntSupplier intSupplier;
-		private IntConsumer intConsumer;
-		private boolean isShort;
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		NBTTagCompound compound = super.writeToNBT(new NBTTagCompound());
+		writeToNBT(compound);
+		return compound;
+	}
 
-		public Syncable(IntSupplier intSupplier, IntConsumer intConsumer) {
-			this(intSupplier, intConsumer, false);
-		}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void onDataPacket(net.minecraft.network.NetworkManager net, SPacketUpdateTileEntity pkt) {
+		super.onDataPacket(net, pkt);
+		readFromNBT(pkt.getNbtCompound());
+	}
 
-		public Syncable(IntSupplier intSupplier, IntConsumer intConsumer, boolean isShort) {
-			this.intSupplier = intSupplier;
-			this.intConsumer = intConsumer;
-			this.isShort = isShort;
-		}
+	/* Saving */
 
-		public IntSupplier getIntSupplier() {
-			return intSupplier;
+	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		if (hasItemInventory) {
+			itemInventory.deserializeNBT(compound.getCompoundTag("item_inventory"));
+			sideConfigData = new SidedConfigData(compound.getCompoundTag("side_config_data"));
 		}
+		if (hasUpgradeInventory) {
+			upgradeInventory.deserializeNBT(compound.getCompoundTag("upgrade_inventory"));
+		}
+		if (hasEnergyInventory) {
+			energyInventory.deserializeNBT(compound.getCompoundTag("energy_inventory"));
+		}
+		if (hasFluidInventory) {
+			fluidInventory.deserializeNBT(compound.getCompoundTag("fluid_inventory"));
+		}
+		super.readFromNBT(compound);
+	}
 
-		public IntConsumer getIntConsumer() {
-			return intConsumer;
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		if (hasItemInventory) {
+			compound.setTag("item_inventory", itemInventory.serializeNBT());
+			compound.setTag("side_config_data", getSideConfigData().serializeNBT());
 		}
+		if (hasUpgradeInventory) {
+			compound.setTag("upgrade_inventory", upgradeInventory.serializeNBT());
+		}
+		if (hasEnergyInventory) {
+			compound.setTag("energy_inventory", energyInventory.serializeNBT());
+		}
+		if (hasFluidInventory) {
+			compound.setTag("fluid_inventory", fluidInventory.serializeNBT());
+		}
+		return super.writeToNBT(compound);
+	}
 
-		public boolean isShort() {
-			return isShort;
+
+	/* Capabilities */
+
+	@SuppressWarnings("unchecked")
+	@Nullable
+	@Override
+	public <T> T getCapability(
+		@Nonnull
+			Capability<T> capability,
+		@Nullable
+			EnumFacing side) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null) {
+			DividedIOItemHandler sideyboi = getHandlerForSide(side);
+			return (T) sideyboi;
 		}
+		if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
+			return (T) energyInventory;
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidInventory != null)
+			return (T) fluidInventory;
+		return super.getCapability(capability, side);
+	}
+
+	@SuppressWarnings("SimplifiableIfStatement")
+	@Override
+	public boolean hasCapability(
+		@Nonnull
+			Capability<?> capability,
+		@Nullable
+			EnumFacing side) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null) {
+			return !getHandlerForSide(side).slots.isEmpty();
+		}
+		if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
+			return true;
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && fluidInventory != null) {
+			return true;
+		}
+		return super.hasCapability(capability, side);
 	}
 
 }

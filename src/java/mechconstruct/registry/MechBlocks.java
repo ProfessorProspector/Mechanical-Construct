@@ -3,6 +3,7 @@ package mechconstruct.registry;
 import com.google.common.base.CaseFormat;
 import mechconstruct.MechConstruct;
 import mechconstruct.block.BlockMachine;
+import mechconstruct.blockentities.basic.BasicBoiler;
 import mechconstruct.blockentities.basic.BasicFurnace;
 import mechconstruct.blockentities.basic.BasicGrinder;
 import net.minecraft.block.Block;
@@ -18,6 +19,7 @@ public class MechBlocks {
 
 	public static final Block BASIC_FURNACE = register(new BlockMachine("furnace", "basic", BasicFurnace.class));
 	public static final Block BASIC_GRINDER = register(new BlockMachine("grinder", "basic", BasicGrinder.class));
+	public static final Block BASIC_BOILER = register(new BlockMachine("boiler", "basic", BasicBoiler.class));
 
 	public static Block register(BlockMachine block) {
 		String machineName = "Mech" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, block.getTier() + "_" + block.getName());

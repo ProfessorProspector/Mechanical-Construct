@@ -2,8 +2,6 @@ package mechconstruct.gui;
 
 import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.blueprint.IBlueprintProvider;
-import mechconstruct.networking.MechPacketHandler;
-import mechconstruct.networking.PacketSlotSync;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -21,11 +19,7 @@ public class MechGuiHandler implements IGuiHandler {
 		BlockPos pos = new BlockPos(x, y, z);
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof IBlueprintProvider) {
-			if (tile instanceof BlockEntityMachine && ((BlockEntityMachine) tile).hasItemInventory()) {
-				PacketSlotSync packetSlotSync = new PacketSlotSync(pos, ((BlockEntityMachine) tile).getSideConfigData());
-				MechPacketHandler.networkWrapper.sendToAll(packetSlotSync);
-			}
-			return new MechContainer((IBlueprintProvider) tile, ((IBlueprintProvider) tile).getCurrentTab(), player);
+			return ((IBlueprintProvider) tile).getContainer(((IBlueprintProvider) tile).getCurrentTab(), player);
 		}
 		return null;
 	}

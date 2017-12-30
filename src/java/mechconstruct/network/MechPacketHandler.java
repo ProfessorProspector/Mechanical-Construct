@@ -1,4 +1,4 @@
-package mechconstruct.networking;
+package mechconstruct.network;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -26,5 +26,6 @@ public class MechPacketHandler {
 		networkWrapper.registerMessage(PacketIOSave.Handler.class, PacketIOSave.class, nextId(), Side.SERVER);
 		networkWrapper.registerMessage(PacketSlotSave.Handler.class, PacketSlotSave.class, nextId(), Side.SERVER);
 		networkWrapper.registerMessage(PacketSlotSync.Handler.class, PacketSlotSync.class, nextId(), Side.CLIENT);
+		networkWrapper.registerMessage(PacketTankSync.Handler.class, PacketTankSync.class, nextId(), Side.CLIENT);
 	}
 }

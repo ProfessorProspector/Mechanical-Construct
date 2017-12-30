@@ -31,6 +31,10 @@ public class Sprite implements ISprite {
 	public static final Sprite FAKE_SLOT = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 72, 0, 18, 18);
 	public static final Sprite BUTTON_HOVER_OVERLAY_SLOT_NORMAL = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 90, 0, 18, 18);
 	public static final Sprite MODEL_SLOT = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 108, 0, 18, 18);
+	public static final Sprite TANK_BACKGROUND = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 29, 60, 22, 56);
+	public static final Sprite TANK_OVERLAY = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 51, 60, 16, 50);
+	public static final Sprite ARROW_BACKGROUND = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 26, 116, 22, 16);
+	public static final Sprite ARROW_OVERLAY = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 48, 116, 22, 16);
 	public static final Sprite.Button EXIT_BUTTON = new Sprite.Button(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 44, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 44, 13, 13));
 	public static final Sprite.CheckBox LIGHT_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 18, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 18, 17, 13));
 	public static final Sprite.CheckBox DARK_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 31, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 31, 17, 13));

@@ -1,4 +1,4 @@
-package mechconstruct.networking;
+package mechconstruct.network;
 
 import io.netty.buffer.ByteBuf;
 import mechconstruct.blockentities.BlockEntityMachine;

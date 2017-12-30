@@ -1,7 +1,6 @@
-package mechconstruct.networking;
+package mechconstruct.network;
 
 import io.netty.buffer.ByteBuf;
-import mechconstruct.blockentities.BlockEntityMachine;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
