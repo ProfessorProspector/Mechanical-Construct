@@ -15,8 +15,6 @@ public interface IBlueprintProvider {
 
 	public ItemStackHandler getUpgradeInventory();
 
-	public ItemStackHandler getChargeInventory();
-
 	public EnergyHandler getEnergyInventory();
 
 	public FluidHandler getFluidInventory();

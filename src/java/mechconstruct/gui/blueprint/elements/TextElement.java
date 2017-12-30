@@ -2,6 +2,7 @@ package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.MechConstruct;
 import mechconstruct.gui.MechGui;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -10,6 +11,7 @@ public class TextElement extends Element {
 	protected int color;
 	protected boolean centered = false;
 	protected int clipTo = -1;
+	protected boolean translate = false;
 
 	public TextElement(String text, int color, int x, int y) {
 		super(x, y);
@@ -42,12 +44,44 @@ public class TextElement extends Element {
 		this.clipTo = clipTo;
 	}
 
+	public TextElement(String text, boolean translate, int color, int x, int y) {
+		super(x, y);
+		this.translate = translate;
+		this.text = text;
+		this.color = color;
+	}
+
+	public TextElement(String text, boolean translate, int color, int x, int y, int clipTo) {
+		this(text, translate, color, x, y);
+		this.clipTo = clipTo;
+	}
+
+	public TextElement(String text, boolean translate, int color, int x, int y, boolean centered) {
+		this(text, translate, color, x, y);
+		this.centered = centered;
+	}
+
+	public TextElement(String text, boolean translate, int color, int y, boolean centered) {
+		this(text, translate, color, -1, y);
+		this.centered = centered;
+	}
+
+	public TextElement(String text, boolean translate, int color, int x, int y, boolean centered, int clipTo) {
+		this(text, translate, color, x, y, centered);
+		this.clipTo = clipTo;
+	}
+
+	public TextElement(String text, boolean translate, int color, int y, boolean centered, int clipTo) {
+		this(text, translate, color, y, centered);
+		this.clipTo = clipTo;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void draw(MechGui gui) {
-		String string = text;
+		String string = translate ? I18n.format(text) : text;
 		if (clipTo > -1 && gui.mc.fontRenderer.getStringWidth(string) > clipTo) {
-			string = gui.mc.fontRenderer.trimStringToWidth(text, clipTo - gui.mc.fontRenderer.getStringWidth("..."));
+			string = gui.mc.fontRenderer.trimStringToWidth(string, clipTo - gui.mc.fontRenderer.getStringWidth("..."));
 			string = string + "...";
 		}
 		if (centered) {

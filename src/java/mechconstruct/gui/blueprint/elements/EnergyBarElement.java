@@ -20,7 +20,7 @@ public class EnergyBarElement extends Element {
 	@SideOnly(Side.CLIENT)
 	public void drawTooltip(MechGui gui, int mouseX, int mouseY) {
 		super.drawTooltip(gui, mouseX, mouseY);
-		MechConstruct.proxy.getGuiAssembler().drawPercentTooltip(gui, mouseX, mouseY, energy, capacity, I18n.format("gui.mechconstruct.energy"), I18n.format("gui.mechconstruct.charged"));
+		MechConstruct.proxy.getGuiAssembler().drawPercentTooltip(gui, mouseX, mouseY, energy, capacity, I18n.format("gui.mechconstruct.energy_unit"), I18n.format("gui.mechconstruct.charged"));
 	}
 
 	public void setEnergyValues(int energy, int capacity) {

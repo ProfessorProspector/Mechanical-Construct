@@ -1,9 +1,11 @@
 package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.MechConstruct;
+import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.MechGui;
 import mechconstruct.gui.SlotType;
 import mechconstruct.gui.blueprint.Sprite;
+import mechconstruct.util.MachineSide;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -55,12 +57,37 @@ public class ConfigSlotElement extends Element {
 						gui.elements.removeAll(((ConfigSlotElement) element).toRemove);
 					}
 				}));
-
-			elements.add(new CheckBoxElement(I18n.format("gui.mechconstruct.auto_input"), 4210752, x - 29, y + 40, false, Sprite.DARK_CHECK_BOX));
-			elements.add(new CheckBoxElement(I18n.format("gui.mechconstruct.auto_output"), 4210752, x - 29, y + 55, true, Sprite.DARK_CHECK_BOX));
+			//			elements.add(new CheckBoxElement(I18n.format("gui.mechconstruct.auto_input"), 4210752, x - 29, y + 40, true, Sprite.DARK_CHECK_BOX).addPressAction((element1, gui1, provider1, mouseX1, mouseY1) -> {
+			//				updateCheckBox((CheckBoxElement) element1, "input", gui1);
+			//			}));
+			//			elements.add(new CheckBoxElement(I18n.format("gui.mechconstruct.auto_output"), 4210752, x - 29, y + 55, true, Sprite.DARK_CHECK_BOX).addPressAction((element1, gui1, provider1, mouseX1, mouseY1) -> {
+			//				updateCheckBox((CheckBoxElement) element1, "output", gui1);
+			//			}));
+			elements.add(new SlotIOElement(x - 19, y + 1, ((ConfigSlotElement) element).id, MachineSide.LEFT.getFacing((BlockEntityMachine) provider)));
+			elements.add(new SlotIOElement(x, y - 18, ((ConfigSlotElement) element).id, MachineSide.TOP.getFacing((BlockEntityMachine) provider)));
+			elements.add(new SlotIOElement(x, y + 1, ((ConfigSlotElement) element).id, MachineSide.FRONT.getFacing((BlockEntityMachine) provider)));
+			elements.add(new SlotIOElement(x, y + 20, ((ConfigSlotElement) element).id, MachineSide.BOTTOM.getFacing((BlockEntityMachine) provider)));
+			elements.add(new SlotIOElement(x + 19, y + 1, ((ConfigSlotElement) element).id, MachineSide.RIGHT.getFacing((BlockEntityMachine) provider)));
+			elements.add(new SlotIOElement(x + 19, y + 20, ((ConfigSlotElement) element).id, MachineSide.BACK.getFacing((BlockEntityMachine) provider)));
 			gui.addAdditionalElements(elements);
 			((ConfigSlotElement) element).toRemove = elements;
 		}));
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void updateCheckBox(CheckBoxElement checkBoxElement, String type, MechGui gui) {
+/*		SlotConfiguration.SlotConfigHolder configHolder = ((BlockEntityMachine) gui.provider).slotConfiguration.getSlotDetails(id);
+		boolean input = configHolder.autoInput();
+		boolean output = configHolder.autoOutput();
+		if (type.equalsIgnoreCase("input")) {
+			input = !configHolder.autoInput();
+		}
+		if (type.equalsIgnoreCase("output")) {
+			output = !configHolder.autoOutput();
+		}
+
+		PacketIOSave packetSlotSave = new PacketIOSave(((BlockEntityMachine) gui.provider).getPos(), id, input, output);
+		MechPacketHandler.networkWrapper.sendToServer(packetSlotSave);*/
 	}
 
 	@Override

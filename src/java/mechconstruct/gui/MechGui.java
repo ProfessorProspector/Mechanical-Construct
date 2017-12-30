@@ -46,7 +46,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	public void initGui() {
 		super.initGui();
 		renderItem = itemRender;
-		this.elements.clear();
+		elements.clear();
 		elements.addAll(blueprint.getElements());
 		for (GuiTabBlueprint tab : provider.getGuiTabBlueprints()) {
 			Sprite sprite = Sprite.LEFT_TAB;

@@ -14,6 +14,8 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -125,5 +127,27 @@ public class BlockMachine extends Block {
 			return true;
 		}
 		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
+	}
+
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		BlockEntityMachine machine = (BlockEntityMachine) worldIn.getTileEntity(pos);
+		if (machine.hasItemInventory()) {
+			for (int i = 0; i < machine.getItemInventory().getSlots(); ++i) {
+				ItemStack itemstack = machine.getItemInventory().getStackInSlot(i);
+				if (!itemstack.isEmpty()) {
+					InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), itemstack);
+				}
+			}
+		}
+		if (machine.hasUpgradeInventory()) {
+			for (int i = 0; i < machine.getUpgradeInventory().getSlots(); ++i) {
+				ItemStack itemstack = machine.getUpgradeInventory().getStackInSlot(i);
+				if (!itemstack.isEmpty()) {
+					InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), itemstack);
+				}
+			}
+		}
+		super.breakBlock(worldIn, pos, state);
 	}
 }

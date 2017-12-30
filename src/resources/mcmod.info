@@ -1,13 +1,15 @@
-[{
-  "modid": "mechconstruct",
-  "name": "Mechanical Construct",
-  "description": "basically Prospector's Tech Reborn",
-  "version": "@VERSION@",
-  "mcversion": "@MCVERSION@",
-  "url": "https://github.com/ProfessorProspector/MechanicalConstruct",
-  "authorList": [
-    "Prospector"
-  ],
-  "credits": "Textures by Yulife for Tech Reborn",
-  "logoFile": "logo.png",
-}]
+[
+  {
+    "modid": "mechconstruct",
+    "name": "Mechanical Construct",
+    "description": "basically Prospector's Tech Reborn",
+    "version": "@VERSION@",
+    "mcversion": "@MCVERSION@",
+    "url": "https://github.com/ProfessorProspector/MechanicalConstruct",
+    "authorList": [
+      "Prospector"
+    ],
+    "credits": "Textures by Yulife for Tech Reborn, Parts of code here and there by Modmuss50",
+    "logoFile": "logo.png"
+  }
+]

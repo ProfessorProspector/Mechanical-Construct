@@ -9,6 +9,8 @@ import net.minecraft.util.ResourceLocation;
 public class Sprite implements ISprite {
 	public static final Sprite EMPTY = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 0, 0, 0, 0);
 	public static final Sprite SLOT_NORMAL = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 0, 0, 18, 18);
+	public static final Sprite INPUT_ICON = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 126, 0, 18, 18);
+	public static final Sprite OUTPUT_ICON = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 144, 0, 18, 18);
 	public static final Sprite CHARGE_SLOT_ICON = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 18, 0, 18, 18);
 	public static final Sprite DISCHARGE_SLOT_ICON = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 36, 0, 18, 18);
 	public static final Sprite ENERGY_BAR = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 0, 18, 12, 40);
@@ -30,8 +32,8 @@ public class Sprite implements ISprite {
 	public static final Sprite BUTTON_HOVER_OVERLAY_SLOT_NORMAL = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 90, 0, 18, 18);
 	public static final Sprite MODEL_SLOT = new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 108, 0, 18, 18);
 	public static final Sprite.Button EXIT_BUTTON = new Sprite.Button(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 44, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 44, 13, 13));
-	public static final Sprite.CheckBox LIGHT_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 18, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 18, 16, 13));
-	public static final Sprite.CheckBox DARK_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 31, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 31, 16, 13));
+	public static final Sprite.CheckBox LIGHT_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 18, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 18, 17, 13));
+	public static final Sprite.CheckBox DARK_CHECK_BOX = new Sprite.CheckBox(new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 74, 31, 13, 13), new Sprite(GuiAssemblerServer.MECH_ELEMENTS, 87, 31, 17, 13));
 
 	public final ResourceLocation textureLocation;
 	public final int x;

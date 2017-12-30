@@ -1,11 +1,15 @@
 package mechconstruct.gui.blueprint;
 
+import com.google.common.base.Preconditions;
 import com.mojang.realmsclient.util.Pair;
 import mechconstruct.MechConstruct;
+import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.SlotType;
 import mechconstruct.gui.blueprint.elements.DummySlotElement;
 import mechconstruct.gui.blueprint.elements.Element;
 import mechconstruct.gui.blueprint.elements.SlotElement;
+import mechconstruct.util.slotconfig.SlotConfig;
+import mechconstruct.util.slotconfig.SlotSideMap;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ public class GuiBlueprint {
 	public int ySize = 0;
 	public int playerInvX = -1;
 	public int playerInvY = -1;
+	public List<SlotMapCompound> defaultConfigs = new ArrayList<>();
 	private List<Element> elements = new ArrayList<>();
 
 	public GuiBlueprint(IBlueprintProvider provider) {
@@ -92,17 +97,39 @@ public class GuiBlueprint {
 		return this;
 	}
 
-	public GuiBlueprint addSlot(SlotType type, int x, int y) {
-		return addSlot(provider.getItemInventory(), type, x, y);
-	}
-
 	public GuiBlueprint addSlot(ItemStackHandler inventory, SlotType type, int x, int y) {
 		addSlot(new SlotElement(inventory, slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY(), type, x, y));
 		return this;
 	}
 
+	public GuiBlueprint addSlot(SlotType type, int x, int y) {
+		return addSlot(provider.getItemInventory(), type, x, y);
+	}
+
 	public GuiBlueprint addSlot(int x, int y) {
 		return addSlot(SlotType.NORMAL, x, y);
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(SlotType type, int x, int y, SlotSideMap defaultConfig) {
+		Preconditions.checkArgument(provider instanceof BlockEntityMachine, "Provider is not of type BlockEntityMachine");
+		defaultConfigs.add(new SlotMapCompound(slots.size(), defaultConfig));
+		return addSlot(provider.getItemInventory(), type, x, y);
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(int x, int y, SlotSideMap defaultConfig) {
+		return addMachineSlot(SlotType.NORMAL, x, y, defaultConfig);
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(int x, int y) {
+		return addMachineSlot(SlotType.NORMAL, x, y, new SlotSideMap(SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE));
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(SlotType type, int x, int y) {
+		return addMachineSlot(type, x, y, new SlotSideMap(SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE));
 	}
 
 	public GuiBlueprint addSlot(ItemStackHandler inventory, int x, int y) {
@@ -137,5 +164,23 @@ public class GuiBlueprint {
 
 	public GuiTabBlueprint makeTabBlueprint(String name, Sprite sprite) {
 		return makeTabBlueprint(name, sprite, null);
+	}
+
+	public class SlotMapCompound {
+		int id;
+		SlotSideMap map;
+
+		public SlotMapCompound(int id, SlotSideMap map) {
+			this.id = id;
+			this.map = map;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public SlotSideMap getMap() {
+			return map;
+		}
 	}
 }

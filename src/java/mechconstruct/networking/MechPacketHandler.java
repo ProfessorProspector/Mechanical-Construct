@@ -23,5 +23,8 @@ public class MechPacketHandler {
 	public static void registerMessages() {
 		networkWrapper.registerMessage(PacketGuiTabMachine.Handler.class, PacketGuiTabMachine.class, nextId(), Side.SERVER);
 		networkWrapper.registerMessage(PacketGuiTabItemStack.Handler.class, PacketGuiTabItemStack.class, nextId(), Side.SERVER);
+		networkWrapper.registerMessage(PacketIOSave.Handler.class, PacketIOSave.class, nextId(), Side.SERVER);
+		networkWrapper.registerMessage(PacketSlotSave.Handler.class, PacketSlotSave.class, nextId(), Side.SERVER);
+		networkWrapper.registerMessage(PacketSlotSync.Handler.class, PacketSlotSync.class, nextId(), Side.CLIENT);
 	}
 }

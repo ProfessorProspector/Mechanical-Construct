@@ -6,6 +6,8 @@ import mechconstruct.gui.MechGuiHandler;
 import mechconstruct.gui.blueprint.elements.Element;
 import mechconstruct.networking.MechPacketHandler;
 import mechconstruct.registry.MechRegistry;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -32,7 +34,15 @@ public class MechCommon {
 		return guiAssembler;
 	}
 
-	public void clientCalls(Element element){
+	public void clientCalls(Element element) {
 
+	}
+
+	public World getClientWorld() {
+		return null;
+	}
+
+	public EntityPlayer getClientPlayer() {
+		return null;
 	}
 }

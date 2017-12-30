@@ -7,6 +7,8 @@ import mechconstruct.gui.blueprint.GuiBlueprint;
 import mechconstruct.gui.blueprint.elements.TextElement;
 import mechconstruct.util.EnergyUtils;
 import mechconstruct.util.RecipeUtils;
+import mechconstruct.util.slotconfig.SlotConfig;
+import mechconstruct.util.slotconfig.SlotSideMap;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -18,9 +20,9 @@ public class BasicFurnace extends BlockEntityMachine {
 		super(2, 1000, EnergyUtils.Bandwidth.BASIC, 2);
 		this.mainBlueprint = new GuiBlueprint(this)
 			.setPlayerInvPos(7, 93)
-			.addElement(new TextElement("Inventory", 4210752, 8, 83))
-			.addSlot(SlotType.NORMAL, 20, 20)
-			.addSlot(SlotType.NORMAL, 40, 20);
+			.addElement(new TextElement("container.inventory", true, 4210752, 8, 83))
+			.addMachineSlot(SlotType.NORMAL, 20, 20, new SlotSideMap(SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.INPUT, SlotConfig.INPUT, SlotConfig.OUTPUT))
+			.addMachineSlot(SlotType.NORMAL, 40, 20, new SlotSideMap(SlotConfig.OUTPUT, SlotConfig.INPUT, SlotConfig.NONE, SlotConfig.INPUT, SlotConfig.INPUT, SlotConfig.INPUT));
 	}
 
 	@Override

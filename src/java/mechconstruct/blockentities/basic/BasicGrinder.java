@@ -11,9 +11,9 @@ public class BasicGrinder extends BlockEntityMachine {
 		super(2, 1000, EnergyUtils.Bandwidth.BASIC, 12);
 		this.mainBlueprint = new GuiBlueprint(this)
 			.setPlayerInvPos(7, 93)
-			.addElement(new TextElement("Inventory", 4210752, 8, 83))
-			.addSlot(SlotType.NORMAL, 20, 20)
-			.addSlot(SlotType.NORMAL, 20, 30);
+			.addElement(new TextElement("container.inventory", true, 4210752, 8, 83))
+			.addMachineSlot(SlotType.NORMAL, 20, 20)
+			.addMachineSlot(SlotType.NORMAL, 20, 30);
 	}
 
 	@Override
