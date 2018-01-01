@@ -1,7 +1,6 @@
 package mechconstruct.gui.blueprint.elements;
 
 import mechconstruct.MechConstruct;
-import mechconstruct.block.BlockMachine;
 import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.gui.MechGui;
 import mechconstruct.gui.blueprint.Sprite;
@@ -57,7 +56,7 @@ public class SlotConfigPopupElement extends Element {
 		IBlockState state = blockAccess.getBlockState(pos);
 		IBlockState actualState = Blocks.DIRT.getDefaultState().getActualState(blockAccess, pos);
 		BlockRendererDispatcher dispatcher = FMLClientHandler.instance().getClient().getBlockRendererDispatcher();
-		IBakedModel model = dispatcher.getBlockModelShapes().getModelForState(state.withProperty(BlockMachine.FACING, EnumFacing.NORTH));
+		IBakedModel model = dispatcher.getBlockModelShapes().getModelForState(state.withProperty(machine.getFacingProperty(), EnumFacing.NORTH));
 		FMLClientHandler.instance().getClient().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 4, configY + 23);
 		drawState(gui, blockAccess, model, actualState, pos, dispatcher, configX + 23, configY - 12, -90F, 1F, 0F, 0F);

@@ -154,13 +154,13 @@ public class GuiAssembler extends GuiAssemblerServer {
 	}
 
 	@Override
-	public void drawCenteredString(MechGui gui, String string, int y, int colour) {
-		drawString(gui, string, (gui.getXSize() / 2 - gui.mc.fontRenderer.getStringWidth(string) / 2), y, colour);
+	public void drawCenteredString(MechGui gui, String string, int y, int color) {
+		drawString(gui, string, (gui.getXSize() / 2 - gui.mc.fontRenderer.getStringWidth(string) / 2), y, color);
 	}
 
 	@Override
-	public void drawCenteredString(MechGui gui, String string, int x, int y, int colour) {
-		drawString(gui, string, (x - gui.mc.fontRenderer.getStringWidth(string) / 2), y, colour);
+	public void drawCenteredString(MechGui gui, String string, int x, int y, int color) {
+		drawString(gui, string, (x - gui.mc.fontRenderer.getStringWidth(string) / 2), y, color);
 	}
 
 	@Override

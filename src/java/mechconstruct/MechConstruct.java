@@ -4,6 +4,7 @@ import mechconstruct.proxy.MechCommon;
 import mechconstruct.registry.MechItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -31,6 +32,10 @@ public class MechConstruct {
 
 	@Mod.Instance
 	public static MechConstruct instance;
+
+	public MechConstruct() {
+		FluidRegistry.enableUniversalBucket();
+	}
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

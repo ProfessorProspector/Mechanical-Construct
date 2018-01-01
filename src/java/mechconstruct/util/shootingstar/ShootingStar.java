@@ -28,7 +28,6 @@
 
 package mechconstruct.util.shootingstar;
 
-
 import mechconstruct.util.shootingstar.model.ModelCompound;
 import mechconstruct.util.shootingstar.model.ModelMethods;
 
@@ -38,32 +37,48 @@ import java.util.List;
 import static mechconstruct.util.shootingstar.model.ModelMethods.registerItemModel;
 
 public class ShootingStar {
-    protected static List<ModelCompound> modelList = new ArrayList<>();
+	protected static List<ModelCompound> modelList = new ArrayList<>();
 
-    public static void registerModel(ModelCompound modelCompound) {
-        modelList.add(modelCompound);
-    }
+	public static void registerModel(ModelCompound modelCompound) {
+		modelList.add(modelCompound);
+	}
 
-    public static void registerModels(String modid) {
-        for (ModelCompound compound : modelList) {
-            if (compound.getModid().equals(modid)) {
-                if (compound.isBlock()) {
-                    if (compound.getFileName().equals("shootingstar.undefinedfilename")) {
-                        registerItemModel(compound.getItem(), compound.getMeta(), compound.getBlockStatePath(), compound.getInventoryVariant());
-                        ModelMethods.setBlockStateMapper(compound.getBlock(), compound.getBlockStatePath(), compound.getIgnoreProperties());
-                    } else {
-                        registerItemModel(compound.getItem(), compound.getMeta(), compound.getFileName(), compound.getBlockStatePath(), compound.getInventoryVariant());
-                        ModelMethods.setBlockStateMapper(compound.getBlock(), compound.getFileName(), compound.getBlockStatePath(), compound.getIgnoreProperties());
-                    }
-                }
-                if (compound.isItem()) {
-                    if (compound.getFileName().equals("shootingstar.undefinedfilename")) {
-                        registerItemModel(compound.getItem(), compound.getMeta(), compound.getBlockStatePath(), compound.getInventoryVariant());
-                    } else {
-                        registerItemModel(compound.getItem(), compound.getMeta(), compound.getFileName(), compound.getBlockStatePath(), compound.getInventoryVariant());
-                    }
-                }
-            }
-        }
-    }
+	public static void registerModels(String modid) {
+		for (ModelCompound compound : modelList) {
+			if (compound.getModid().equals(modid)) {
+				if (compound.isBlock()) {
+					if (compound.getFileName().equals("shootingstar.undefinedfilename")) {
+						registerItemModel(compound.getItem(), compound.getMeta(), compound.getBlockStatePath(), compound.getInventoryVariant());
+						if (shouldDoCustomVariant(compound)) {
+							ModelMethods.setBlockStateMapper(compound.getBlock(), compound.getBlockStatePath(), compound.getVariant());
+						} else {
+							ModelMethods.setBlockStateMapper(compound.getBlock(), compound.getBlockStatePath(), compound.getIgnoreProperties());
+						}
+					} else {
+						registerItemModel(compound.getItem(), compound.getMeta(), compound.getFileName(), compound.getBlockStatePath(), compound.getInventoryVariant());
+						if (shouldDoCustomVariant(compound)) {
+							ModelMethods.setBlockStateMapper(compound.getBlock(), compound.getFileName(), compound.getBlockStatePath(), compound.getVariant());
+						} else {
+							ModelMethods.setBlockStateMapper(compound.getBlock(), compound.getFileName(), compound.getBlockStatePath(), compound.getIgnoreProperties());
+						}
+					}
+					if (compound.isItem()) {
+						if (compound.getFileName().equals("shootingstar.undefinedfilename")) {
+							registerItemModel(compound.getItem(), compound.getMeta(), compound.getBlockStatePath(), compound.getInventoryVariant());
+						} else {
+							registerItemModel(compound.getItem(), compound.getMeta(), compound.getFileName(), compound.getBlockStatePath(), compound.getInventoryVariant());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private static boolean shouldDoCustomVariant(ModelCompound compound) {
+		if (!compound.getVariant().equals("shootingstar.undefinedvariant")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

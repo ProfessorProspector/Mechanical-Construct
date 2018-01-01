@@ -91,10 +91,10 @@ public class GuiAssemblerServer {
 	public void setTextureSheet(ResourceLocation textureLocation) {
 	}
 
-	public void drawCenteredString(MechGui gui, String string, int y, int colour) {
+	public void drawCenteredString(MechGui gui, String string, int y, int color) {
 	}
 
-	public void drawCenteredString(MechGui gui, String string, int x, int y, int colour) {
+	public void drawCenteredString(MechGui gui, String string, int x, int y, int color) {
 	}
 
 	public int getStringWidth(String string) {

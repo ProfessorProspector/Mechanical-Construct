@@ -1,0 +1,22 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "forge:fluid"
+  },
+  "variants": {
+    "steam": [
+      {
+        "custom": {
+          "fluid": "steam"
+        }
+      }
+    ],
+    "flue_gas": [
+      {
+        "custom": {
+          "fluid": "flue_gas"
+        }
+      }
+    ]
+  }
+}

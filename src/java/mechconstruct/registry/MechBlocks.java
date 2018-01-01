@@ -2,7 +2,10 @@ package mechconstruct.registry;
 
 import com.google.common.base.CaseFormat;
 import mechconstruct.MechConstruct;
+import mechconstruct.block.BlockExhaustPipe;
 import mechconstruct.block.BlockMachine;
+import mechconstruct.block.BlockMachineFacingAndActive;
+import mechconstruct.blockentities.ExhaustPipe;
 import mechconstruct.blockentities.basic.BasicBoiler;
 import mechconstruct.blockentities.basic.BasicFurnace;
 import mechconstruct.blockentities.basic.BasicGrinder;
@@ -17,12 +20,18 @@ public class MechBlocks {
 	protected static final ArrayList<Block> BLOCKS = new ArrayList<>();
 	protected static final HashMap<String, Class<? extends TileEntity>> BLOCK_ENTITIES = new HashMap<>();
 
-	public static final Block BASIC_FURNACE = register(new BlockMachine("furnace", "basic", BasicFurnace.class));
-	public static final Block BASIC_GRINDER = register(new BlockMachine("grinder", "basic", BasicGrinder.class));
-	public static final Block BASIC_BOILER = register(new BlockMachine("boiler", "basic", BasicBoiler.class));
+	public static final Block BASIC_FURNACE = register(new BlockMachineFacingAndActive("furnace", "basic", BasicFurnace.class));
+	public static final Block BASIC_GRINDER = register(new BlockMachineFacingAndActive("grinder", "basic", BasicGrinder.class));
+	public static final Block BASIC_BOILER = register(new BlockMachineFacingAndActive("boiler", "basic", BasicBoiler.class));
+	public static final Block EXHAUST_PIPE = register(new BlockExhaustPipe("exhaust_pipe", ExhaustPipe.class));
 
 	public static Block register(BlockMachine block) {
-		String machineName = "Mech" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, block.getTier() + "_" + block.getName());
+		String machineName;
+		if (!block.getTier().isEmpty()) {
+			machineName = "Mech" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, block.getTier() + "_" + block.getName());
+		} else {
+			machineName = "Mech" + CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, block.getName());
+		}
 		block.setCreativeTab(MechConstruct.TAB);
 		BLOCKS.add(block);
 		ItemBlock item = new ItemBlock(block);

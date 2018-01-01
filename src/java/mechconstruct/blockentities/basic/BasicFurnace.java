@@ -20,7 +20,7 @@ public class BasicFurnace extends BlockEntityMachine {
 		super(2, 1000, EnergyUtils.Bandwidth.BASIC, 2);
 		this.mainBlueprint = new GuiBlueprint(this)
 			.setPlayerInvPos(7, 93)
-			.addElement(new TextElement("container.inventory", true, 4210752, 8, 83))
+			.addElement(new TextElement("container.inventory", true, 0x404040, 8, 83))
 			.addMachineSlot(SlotType.NORMAL, 20, 20, new SlotSideMap(SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.INPUT, SlotConfig.INPUT, SlotConfig.OUTPUT))
 			.addMachineSlot(SlotType.NORMAL, 40, 20, new SlotSideMap(SlotConfig.OUTPUT, SlotConfig.INPUT, SlotConfig.NONE, SlotConfig.INPUT, SlotConfig.INPUT, SlotConfig.INPUT));
 	}

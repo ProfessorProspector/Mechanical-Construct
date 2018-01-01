@@ -4,6 +4,11 @@ item.mechconstruct.wrench.name=Pipe Wrench
 
 provider.mechconstruct.basic.furnace.name=Basic Furnace
 provider.mechconstruct.basic.grinder.name=Basic Grinder
+provider.mechconstruct.basic.boiler.name=Basic Boiler
+provider.mechconstruct.exhaust_pipe.name=Smokestack
+
+fluid.mechconstruct.steam=Steam
+fluid.mechconstruct.flue_gas=Flue Gas
 
 gui.mechconstruct.main=Main
 gui.mechconstruct.energy=Energy
@@ -20,4 +25,4 @@ gui.mechconstruct.auto_input=Auto Input
 gui.mechconstruct.auto_output=Auto Output
 gui.mechconstruct.empty_tank=Empty Tank
 gui.mechconstruct.milli_buckets_unit=mB
-gui.mechconstruct.full=Charged
+gui.mechconstruct.full=Full

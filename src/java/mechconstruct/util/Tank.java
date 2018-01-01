@@ -1,16 +1,20 @@
 package mechconstruct.util;
 
+import mechconstruct.blockentities.BlockEntityMachine;
+import mechconstruct.network.MechPacketHandler;
+import mechconstruct.network.PacketTankSync;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
 
 public class Tank extends FluidTank {
-	Fluid lastFluid;
-	int lastAmount;
 	private String name;
+	private FillFilter filter = f -> true;
 
 	public Tank(String name, int capacity) {
 		super(capacity);
@@ -33,6 +37,11 @@ public class Tank extends FluidTank {
 		return name;
 	}
 
+	public Tank setFilter(FillFilter filter) {
+		this.filter = filter;
+		return this;
+	}
+
 	@Override
 	public FluidTank readFromNBT(NBTTagCompound compound) {
 		// Allow to read empty tanks
@@ -43,5 +52,37 @@ public class Tank extends FluidTank {
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		return super.writeToNBT(compound);
+	}
+
+	@Override
+	protected void onContentsChanged() {
+		super.onContentsChanged();
+		if (tile instanceof BlockEntityMachine && ((BlockEntityMachine) tile).hasFluidInventory()) {
+			BlockPos pos = tile.getPos();
+			MechPacketHandler.networkWrapper.sendToAllAround(new PacketTankSync(pos, ((BlockEntityMachine) tile).getFluidInventory().serializeNBT()), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
+		}
+	}
+
+	@Override
+	public boolean canFillFluidType(FluidStack fluid) {
+		if (filter.canFillFluidType(fluid)) {
+			return super.canFillFluidType(fluid);
+		} else {
+			return false;
+		}
+	}
+
+	public Tank setFillable(boolean fillable) {
+		setCanFill(fillable);
+		return this;
+	}
+
+	public Tank setDrainable(boolean drainable) {
+		setCanDrain(drainable);
+		return this;
+	}
+
+	public interface FillFilter {
+		public boolean canFillFluidType(FluidStack fluid);
 	}
 }

@@ -8,6 +8,7 @@ import mechconstruct.gui.SlotType;
 import mechconstruct.gui.blueprint.elements.DummySlotElement;
 import mechconstruct.gui.blueprint.elements.Element;
 import mechconstruct.gui.blueprint.elements.SlotElement;
+import mechconstruct.gui.slot.MechSlot;
 import mechconstruct.util.slotconfig.SlotConfig;
 import mechconstruct.util.slotconfig.SlotSideMap;
 import net.minecraftforge.items.ItemStackHandler;
@@ -98,7 +99,7 @@ public class GuiBlueprint {
 	}
 
 	public GuiBlueprint addSlot(ItemStackHandler inventory, SlotType type, int x, int y) {
-		addSlot(new SlotElement(inventory, slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY(), type, x, y));
+		addSlot(new SlotElement(inventory, slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY(), type, x, y, (slot, stack) -> true));
 		return this;
 	}
 
@@ -134,6 +135,45 @@ public class GuiBlueprint {
 
 	public GuiBlueprint addSlot(ItemStackHandler inventory, int x, int y) {
 		return addSlot(inventory, SlotType.NORMAL, x, y);
+	}
+
+	public GuiBlueprint addSlot(ItemStackHandler inventory, SlotType type, int x, int y, MechSlot.SlotFilter filter) {
+		addSlot(new SlotElement(inventory, slots.size(), x + type.getSlotOffsetX(), y + type.getSlotOffsetY(), type, x, y, filter));
+		return this;
+	}
+
+	public GuiBlueprint addSlot(SlotType type, int x, int y, MechSlot.SlotFilter filter) {
+		return addSlot(provider.getItemInventory(), type, x, y, filter);
+	}
+
+	public GuiBlueprint addSlot(int x, int y, MechSlot.SlotFilter filter) {
+		return addSlot(SlotType.NORMAL, x, y, filter);
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(SlotType type, int x, int y, SlotSideMap defaultConfig, MechSlot.SlotFilter filter) {
+		Preconditions.checkArgument(provider instanceof BlockEntityMachine, "Provider is not of type BlockEntityMachine");
+		defaultConfigs.add(new SlotMapCompound(slots.size(), defaultConfig));
+		return addSlot(provider.getItemInventory(), type, x, y, filter);
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(int x, int y, SlotSideMap defaultConfig, MechSlot.SlotFilter filter) {
+		return addMachineSlot(SlotType.NORMAL, x, y, defaultConfig, filter);
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(int x, int y, MechSlot.SlotFilter filter) {
+		return addMachineSlot(SlotType.NORMAL, x, y, new SlotSideMap(SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE), filter);
+	}
+
+	//Only work on BlockEntityMachine
+	public GuiBlueprint addMachineSlot(SlotType type, int x, int y, MechSlot.SlotFilter filter) {
+		return addMachineSlot(type, x, y, new SlotSideMap(SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE, SlotConfig.NONE), filter);
+	}
+
+	public GuiBlueprint addSlot(ItemStackHandler inventory, int x, int y, MechSlot.SlotFilter filter) {
+		return addSlot(inventory, SlotType.NORMAL, x, y, filter);
 	}
 
 	public GuiBlueprint syncIntegerValue(final IntSupplier supplier, final IntConsumer setter) {

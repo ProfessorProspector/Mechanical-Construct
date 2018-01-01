@@ -34,6 +34,7 @@ import net.minecraft.item.Item;
 
 public class ModelCompound {
 	private String inventoryVariant = "inventory";
+	private String variant = "shootingstar.undefinedvariant";
 	private String fileName = "shootingstar.undefinedfilename";
 	private String blockstatePath;
 	private IProperty[] ignoreProperties = null;
@@ -99,10 +100,6 @@ public class ModelCompound {
 		return this;
 	}
 
-	public void setBlockStatePath(String blockstatePath) {
-		this.blockstatePath = blockstatePath;
-	}
-
 	public String getModid() {
 		return modid;
 	}
@@ -133,11 +130,24 @@ public class ModelCompound {
 		return blockstatePath;
 	}
 
+	public void setBlockStatePath(String blockstatePath) {
+		this.blockstatePath = blockstatePath;
+	}
+
 	public IProperty[] getIgnoreProperties() {
 		return ignoreProperties;
 	}
 
 	public int getMeta() {
 		return meta;
+	}
+
+	public String getVariant() {
+		return variant;
+	}
+
+	public ModelCompound setVariant(String variant) {
+		this.variant = variant;
+		return this;
 	}
 }

@@ -1,0 +1,41 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model": "mechconstruct:machine",
+    "textures": {
+      "particle": "mechconstruct:blocks/machines/basic/boiler_front_off",
+      "top": "mechconstruct:blocks/machines/basic/boiler_top",
+      "bottom": "mechconstruct:blocks/machines/basic/machine_bottom",
+      "left": "mechconstruct:blocks/machines/basic/machine_side",
+      "right": "mechconstruct:blocks/machines/basic/machine_side",
+      "back": "mechconstruct:blocks/machines/basic/machine_side"
+    }
+  },
+  "variants": {
+    "facing": {
+      "north": {},
+      "east": {
+        "y": 90
+      },
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      }
+    },
+    "active": {
+      "true": {
+        "textures": {
+          "front": "mechconstruct:blocks/machines/basic/boiler_front_on"
+        }
+      },
+      "false": {
+        "textures": {
+          "front": "mechconstruct:blocks/machines/basic/boiler_front_off"
+        }
+      }
+    }
+  }
+}

@@ -183,7 +183,7 @@ public class MechGui extends GuiContainer implements IDynamicAdjustmentGUI {
 	}
 
 	protected void drawTitle() {
-		MechConstruct.proxy.getGuiAssembler().drawCenteredString(this, provider.getNameToDisplay() + ": " + provider.getCurrentTab().getLocalizedName(), 6, 4210752);
+		MechConstruct.proxy.getGuiAssembler().drawCenteredString(this, provider.getNameToDisplay() + ": " + provider.getCurrentTab().getLocalizedName(), 6, 0x404040);
 		GlStateManager.disableLighting();
 		GlStateManager.color(1, 1, 1, 1);
 	}

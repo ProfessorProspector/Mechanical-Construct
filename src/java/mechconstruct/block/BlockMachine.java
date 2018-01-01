@@ -5,14 +5,8 @@ import mechconstruct.blockentities.BlockEntityMachine;
 import mechconstruct.util.shootingstar.ShootingStar;
 import mechconstruct.util.shootingstar.model.ModelCompound;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -23,71 +17,39 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
 
 public class BlockMachine extends Block {
-	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	public static final PropertyBool ACTIVE = PropertyBool.create("active");
 	protected String name;
 	protected String tier;
 	protected Class<? extends BlockEntityMachine> entityClass;
-	protected boolean noFacing;
-	protected LinkedList<EnumFacing> facingValues = null;
 
-	public BlockMachine(String name, String tier, boolean noFacing, Class<? extends BlockEntityMachine> entityClass) {
+	public BlockMachine(String name, String tier, Class<? extends BlockEntityMachine> entityClass, boolean regModel) {
 		super(Material.IRON);
 		this.entityClass = entityClass;
-		this.noFacing = noFacing;
 		this.name = name;
 		this.tier = tier;
-		setRegistryName(MechConstruct.MOD_ID, tier + "." + name);
-		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ACTIVE, false));
-		ShootingStar.registerModel(new ModelCompound(MechConstruct.MOD_ID, this, 0, "machines/" + tier).setInvVariant("active=false,facing=north").setFileName(name));
+		if (regModel) {
+			if (!tier.isEmpty()) {
+				setRegistryName(MechConstruct.MOD_ID, tier + "." + name);
+				ShootingStar.registerModel(new ModelCompound(MechConstruct.MOD_ID, this, "machines/" + tier).setInvVariant("normal").setFileName(name));
+			} else {
+				setRegistryName(MechConstruct.MOD_ID, name);
+				ShootingStar.registerModel(new ModelCompound(MechConstruct.MOD_ID, this, "machines").setInvVariant("normal").setFileName(name));
+			}
+		}
 	}
 
 	public BlockMachine(String name, String tier, Class<? extends BlockEntityMachine> entityClass) {
-		this(name, tier, false, entityClass);
+		this(name, tier, entityClass, true);
 	}
 
 	@Override
 	public String getUnlocalizedName() {
-		return "provider." + MechConstruct.MOD_ID + "." + tier + "." + name;
-	}
-
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, noFacing ? new IProperty[] { ACTIVE } : new IProperty[] { FACING, ACTIVE });
-	}
-
-	public LinkedList<EnumFacing> getFacingValues() {
-		if (facingValues == null) {
-			facingValues = new LinkedList<>();
-			facingValues.addAll(FACING.getAllowedValues());
+		if (!tier.isEmpty()) {
+			return "provider." + MechConstruct.MOD_ID + "." + tier + "." + name;
+		} else {
+			return "provider." + MechConstruct.MOD_ID + "." + name;
 		}
-		return facingValues;
-	}
-
-	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-		return getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()).withProperty(ACTIVE, false);
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		int index = meta;
-		if (index >= FACING.getAllowedValues().size()) {
-			index -= FACING.getAllowedValues().size();
-		}
-		return getDefaultState().withProperty(FACING, getFacingValues().get(index));
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state) {
-		int meta = getFacingValues().indexOf(state.getValue(FACING));
-		if (state.getValue(ACTIVE)) {
-			meta += getFacingValues().size();
-		}
-		return meta;
 	}
 
 	@Override
@@ -122,7 +84,7 @@ public class BlockMachine extends Block {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-		if (worldIn.getTileEntity(pos) != null) {
+		if (worldIn.getTileEntity(pos) instanceof BlockEntityMachine && !((BlockEntityMachine) worldIn.getTileEntity(pos)).getGuiTabBlueprints().isEmpty()) {
 			playerIn.openGui(MechConstruct.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}

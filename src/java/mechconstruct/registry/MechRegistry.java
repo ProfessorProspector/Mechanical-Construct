@@ -2,12 +2,15 @@ package mechconstruct.registry;
 
 import mechconstruct.MechConstruct;
 import mechconstruct.blockentities.BlockEntityMachine;
+import mechconstruct.util.fluid.BlockMechFluid;
 import mechconstruct.registry.recipes.basic.BasicFurnaceRecipes;
 import mechconstruct.util.shootingstar.ShootingStar;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -34,6 +37,11 @@ public class MechRegistry {
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
+		for (Fluid fluid : MechFluids.FLUIDS.keySet()) {
+			FluidRegistry.registerFluid(fluid);
+			MechBlocks.register(new BlockMechFluid(fluid, MechFluids.FLUIDS.get(fluid)), false);
+			FluidRegistry.addBucketForFluid(fluid);
+		}
 		for (Block block : MechBlocks.BLOCKS) {
 			event.getRegistry().register(block);
 		}

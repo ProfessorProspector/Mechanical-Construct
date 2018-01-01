@@ -10,6 +10,7 @@ import mechconstruct.util.*;
 import mechconstruct.util.slotconfig.DividedIOItemHandler;
 import mechconstruct.util.slotconfig.SidedConfigData;
 import mechconstruct.util.slotconfig.SlotCompound;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,8 +20,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -95,6 +94,10 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		this(0, energyCapacity, bandwidth, upgradeSlots, tanks);
 	}
 
+	public BlockEntityMachine(int inventorySize, int upgrades, Tank... tanks) {
+		this(inventorySize, 0, EnergyUtils.Bandwidth.NONE, upgrades, tanks);
+	}
+
 	public BlockEntityMachine(int inventorySize, Tank... tanks) {
 		this(inventorySize, 0, EnergyUtils.Bandwidth.NONE, 0, tanks);
 	}
@@ -118,17 +121,29 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		this.block = block;
 	}
 
+	@SuppressWarnings("unchecked")
 	public EnumFacing getFacing() {
-		return world.getBlockState(pos).getValue(BlockMachine.FACING);
+		IProperty<EnumFacing> facingProp = getFacingProperty();
+		if (facingProp != null) {
+			return world.getBlockState(pos).getValue(facingProp);
+		} else {
+			return null;
+		}
 	}
 
-	public void setFluid(String tank, FluidStack fluidStack) {
-		fluidInventory.getTank(tank).setFluid(fluidStack);
-		MechPacketHandler.networkWrapper.sendToAllAround(new PacketTankSync(getPos(), fluidInventory.serializeNBT()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
-	}
+	@SuppressWarnings("unchecked")
+	public IProperty<EnumFacing> getFacingProperty() {
+		IProperty<EnumFacing> facingProp = null;
+		try {
+			for (IProperty property : getBlock().getDefaultState().getPropertyKeys()) {
+				if (property.getName().equals("facing")) {
+					facingProp = property;
+				}
+			}
+		} catch (NullPointerException npe) {
 
-	public void setFluid(String tank, Fluid fluid, int amount) {
-		setFluid(tank, new FluidStack(fluid, amount));
+		}
+		return facingProp;
 	}
 
 	/* Slot Config */
@@ -173,7 +188,7 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 
 	@Override
 	public final List<GuiTabBlueprint> getGuiTabBlueprints() {
-		if (blueprints.isEmpty()) {
+		if (blueprints.isEmpty() && mainBlueprint != null) {
 			List<Element> universalElements = new ArrayList<>();
 			List<Syncable> universalSyncables = new ArrayList<>();
 			GuiTabBlueprint mainTab = mainBlueprint.makeTabBlueprint("main", new Sprite(new ItemStack(block)));
@@ -195,9 +210,12 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 				energyTab.syncIntegerValue(() -> energyInventory.getCapacity(), energyInventory::setCapacity);
 				energyTab.syncIntegerValue(() -> energyInventory.getMaxInput(), energyInventory::setMaxInput);
 				energyTab.syncIntegerValue(() -> energyInventory.getMaxOutput(), energyInventory::setMaxOutput);
-				energyTab.addElement(new TextElement("container.inventory", true, 4210752, 8, 83));
+				energyTab.addElement(new TextElement("container.inventory", true, 0x404040, 8, 83));
 				energyTab.setPlayerInvPos(7, 93);
 				blueprints.add(energyTab);
+				universalElements.add(new TopEnergyBarElement(3, -3));
+				universalSyncables.add(new Syncable(() -> energyInventory.getEnergy(), energyInventory::setEnergy));
+				universalSyncables.add(new Syncable(() -> energyInventory.getCapacity(), energyInventory::setCapacity));
 			}
 			if (hasUpgradeInventory) {
 				GuiTabBlueprint upgradesTab = new GuiTabBlueprint(this, "upgrades", Sprite.UPGRADE_ICON);
@@ -216,11 +234,11 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 						}
 					}
 				}
-				upgradesTab.addElement(new TextElement("container.inventory", true, 4210752, 8, 83));
+				upgradesTab.addElement(new TextElement("container.inventory", true, 0x404040, 8, 83));
 				upgradesTab.setPlayerInvPos(7, 93);
 				blueprints.add(upgradesTab);
 			}
-			if (hasItemInventory || hasEnergyInventory || hasFluidInventory) {
+			if ((hasItemInventory /*|| hasEnergyInventory || hasFluidInventory*/) && getFacing() != null) {
 				GuiTabBlueprint configureTab = new GuiTabBlueprint(this, "configure", Sprite.CONFIGURE_ICON);
 				configureTab.addElements(mainTab.getElements());
 				List<Element> newElements = new ArrayList<>();
@@ -239,9 +257,6 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 				configureTab.addElements(newElements);
 				blueprints.add(configureTab);
 			}
-			universalElements.add(new TopEnergyBarElement(3, -3));
-			universalSyncables.add(new Syncable(() -> energyInventory.getEnergy(), energyInventory::setEnergy));
-			universalSyncables.add(new Syncable(() -> energyInventory.getCapacity(), energyInventory::setCapacity));
 
 			universalElements.addAll(getUniversalElements());
 			universalSyncables.addAll(getUniversalSyncables());
@@ -336,7 +351,9 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 
 	@Override
 	public MechContainer getContainer(GuiTabBlueprint blueprint, EntityPlayer player) {
-		MechPacketHandler.networkWrapper.sendToAllAround(new PacketTankSync(getPos(), fluidInventory.serializeNBT()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
+		if (hasFluidInventory()) {
+			MechPacketHandler.networkWrapper.sendToAllAround(new PacketTankSync(getPos(), fluidInventory.serializeNBT()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
+		}
 		return new MechContainer(this, blueprint, player);
 	}
 
@@ -374,17 +391,19 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		if (hasItemInventory) {
+		if (compound.hasKey("item_inventory")) {
 			itemInventory.deserializeNBT(compound.getCompoundTag("item_inventory"));
+		}
+		if (compound.hasKey("side_config_data")) {
 			sideConfigData = new SidedConfigData(compound.getCompoundTag("side_config_data"));
 		}
-		if (hasUpgradeInventory) {
+		if (compound.hasKey("upgrade_inventory")) {
 			upgradeInventory.deserializeNBT(compound.getCompoundTag("upgrade_inventory"));
 		}
-		if (hasEnergyInventory) {
+		if (compound.hasKey("energy_inventory")) {
 			energyInventory.deserializeNBT(compound.getCompoundTag("energy_inventory"));
 		}
-		if (hasFluidInventory) {
+		if (compound.hasKey("fluid_inventory")) {
 			fluidInventory.deserializeNBT(compound.getCompoundTag("fluid_inventory"));
 		}
 		super.readFromNBT(compound);
@@ -394,7 +413,9 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		if (hasItemInventory) {
 			compound.setTag("item_inventory", itemInventory.serializeNBT());
-			compound.setTag("side_config_data", getSideConfigData().serializeNBT());
+			if (getFacing() != null) {
+				compound.setTag("side_config_data", getSideConfigData().serializeNBT());
+			}
 		}
 		if (hasUpgradeInventory) {
 			compound.setTag("upgrade_inventory", upgradeInventory.serializeNBT());
@@ -420,8 +441,11 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		@Nullable
 			EnumFacing side) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null) {
-			DividedIOItemHandler sideyboi = getHandlerForSide(side);
-			return (T) sideyboi;
+			if (getFacing() != null) {
+				return (T) getHandlerForSide(side);
+			} else {
+				return (T) itemInventory;
+			}
 		}
 		if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
 			return (T) energyInventory;
@@ -438,7 +462,11 @@ public abstract class BlockEntityMachine extends TileEntity implements ITickable
 		@Nullable
 			EnumFacing side) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemInventory != null) {
-			return !getHandlerForSide(side).slots.isEmpty();
+			if (getFacing() != null) {
+				return !getHandlerForSide(side).slots.isEmpty();
+			} else {
+				return true;
+			}
 		}
 		if (capability == CapabilityEnergy.ENERGY && energyInventory != null)
 			return true;

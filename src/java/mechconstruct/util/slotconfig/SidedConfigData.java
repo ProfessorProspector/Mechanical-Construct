@@ -5,7 +5,10 @@ import mechconstruct.util.MachineSide;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
 
 public class SidedConfigData implements INBTSerializable<NBTTagCompound> {
 	protected EnumMap<MachineSide, List<SlotCompound>> configMap = new EnumMap<>(MachineSide.class);
