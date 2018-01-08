@@ -2,10 +2,11 @@ itemGroup.mechconstruct=Mechanical Construct
 
 item.mechconstruct.wrench.name=Pipe Wrench
 
-provider.mechconstruct.basic.furnace.name=Basic Furnace
-provider.mechconstruct.basic.grinder.name=Basic Grinder
-provider.mechconstruct.basic.boiler.name=Basic Boiler
-provider.mechconstruct.exhaust_pipe.name=Smokestack
+machine.mechconstruct.basic.furnace.name=Basic Furnace
+machine.mechconstruct.basic.grinder.name=Basic Grinder
+machine.mechconstruct.basic.boiler.name=Basic Boiler
+
+block.mechconstruct.exhaust_pipe.name=Smokestack
 
 fluid.mechconstruct.steam=Steam
 fluid.mechconstruct.flue_gas=Flue Gas

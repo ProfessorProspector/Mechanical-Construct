@@ -1,0 +1,40 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model": "mechconstruct:machine/machine_same",
+    "textures": {
+      "particle": "mechconstruct:block/machine/basic/grinder/grinder_front_off",
+      "bottom": "mechconstruct:block/machine/basic/machine_bottom",
+      "side": "mechconstruct:block/machine/basic/machine_side"
+    }
+  },
+  "variants": {
+    "facing": {
+      "north": {},
+      "east": {
+        "y": 90
+      },
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      }
+    },
+    "active": {
+      "true": {
+        "textures": {
+          "front": "mechconstruct:block/machine/basic/grinder/grinder_front_on",
+          "top": "mechconstruct:block/machine/basic/grinder/grinder_top_on"
+        }
+      },
+      "false": {
+        "textures": {
+          "front": "mechconstruct:block/machine/basic/grinder/grinder_front_off",
+          "top": "mechconstruct:block/machine/basic/grinder/grinder_top_off"
+        }
+      }
+    }
+  }
+}
